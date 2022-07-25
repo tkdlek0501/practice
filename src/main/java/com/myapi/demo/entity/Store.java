@@ -5,7 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Hello {
+public class Store {
 	
 	@Id @GeneratedValue
 	private Long id;
