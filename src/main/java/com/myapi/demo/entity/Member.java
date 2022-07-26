@@ -17,5 +17,9 @@ public class Member {
 	
 	private String username;
 	
+	private String password;
+	
+	private String name;
+	
 	private int age;
 }
