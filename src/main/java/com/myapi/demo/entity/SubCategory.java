@@ -8,8 +8,7 @@ import javax.persistence.Id;
 @Entity
 public class SubCategory {
 	
-	@Id @GeneratedValue
-	@Column(name = "subcategory_id")
+	@Id
 	private Long id;
 	
 	private String name;

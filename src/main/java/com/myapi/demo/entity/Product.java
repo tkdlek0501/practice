@@ -8,8 +8,7 @@ import javax.persistence.Id;
 @Entity
 public class Product {
 	
-	@Id @GeneratedValue
-	@Column(name = "product_id")
+	@Id
 	private Long id;
 	
 	private int price;

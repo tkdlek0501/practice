@@ -8,8 +8,7 @@ import javax.persistence.Id;
 @Entity
 public class Cart {
 	
-	@Id @GeneratedValue
-	@Column(name = "cart_id")
+	@Id
 	private Long id;
 	
 	

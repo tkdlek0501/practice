@@ -4,15 +4,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-public class Category {
-
+@Table(name = "users") // user는 예약어라 사용 불가
+public class User {
+	
 	@Id @GeneratedValue
-	@Column(name = "category_id")
 	private Long id;
 	
 	private String name;
-	
-	
 }

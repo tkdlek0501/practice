@@ -10,8 +10,7 @@ import javax.persistence.Table;
 @Table(name = "orders")
 public class Order {
 	
-	@Id @GeneratedValue
-	@Column(name = "order_id")
+	@Id
 	private Long id;
 	
 	private int totalPrice;

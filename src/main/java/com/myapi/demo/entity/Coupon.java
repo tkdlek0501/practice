@@ -1,15 +1,14 @@
 package com.myapi.demo.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class ProductOption {
+public class Coupon {
 	
-	@Id @GeneratedValue
-	@Column(name = "product_option_id")
+	@Id
 	private Long id;
 	
+	private String name;
 }
