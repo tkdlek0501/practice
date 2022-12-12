@@ -1,16 +1,14 @@
-package com.myapi.demo.entity;
+package com.myapi.demo.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class Store {
+public class OrderDetail {
 	
 	@Id
 	private Long id;
 	
 	private String name;
-	
 }

@@ -1,11 +1,11 @@
-package com.myapi.demo.entity;
+package com.myapi.demo.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
-public class OrderDetail {
+public class OrderDetailOptionMap {
 	
 	@Id
 	private Long id;
