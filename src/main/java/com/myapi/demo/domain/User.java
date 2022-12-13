@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter
 @Table(name = "users") // user는 예약어라 사용 불가
 public class User {
 	

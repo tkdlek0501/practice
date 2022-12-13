@@ -11,9 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter
 public class Store {
 	
 	@Id
@@ -30,6 +32,9 @@ public class Store {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@OneToMany(mappedBy = "store")
+	private List<Product> products = new ArrayList<>();
+	
 	// 셀프조인 참고
 	// https://velog.io/@titu/Spring-JPA-Self-Join-%EC%85%80%ED%94%84%EC%A1%B0%EC%9D%B8
 	
@@ -43,5 +48,10 @@ public class Store {
 	public void changeUser(User user) {
 		this.user = user;
 		user.setStore(this);
+	}
+	
+	public void addProduct(Product product) {
+		products.add(product);
+		product.setStore(this);
 	}
 }

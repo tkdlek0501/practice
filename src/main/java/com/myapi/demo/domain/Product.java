@@ -1,16 +1,41 @@
 package com.myapi.demo.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
 public class Product {
 	
 	@Id
 	private Long id;
 	
+	private String name;
+	
 	private int price;
-
+	
+	private String code;
+	
+	private int quantity;
+	
+	private boolean isSoldOut;
+	
+	private PriceControlType priceControlType;
+	
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "store_id")
+	private Store store;
+	
+	public void changeStore(Store store) {
+		this.store = store;
+		store.getProducts().add(this);
+	}
+	
 }
