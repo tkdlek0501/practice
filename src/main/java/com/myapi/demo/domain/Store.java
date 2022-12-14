@@ -27,14 +27,6 @@ public class Store {
 	
 	private String businessNo;
 	
-	@Setter
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user;
-	
-	@OneToMany(mappedBy = "store")
-	private List<Product> products = new ArrayList<>();
-	
 	// 셀프조인 참고
 	// https://velog.io/@titu/Spring-JPA-Self-Join-%EC%85%80%ED%94%84%EC%A1%B0%EC%9D%B8
 	
@@ -45,13 +37,30 @@ public class Store {
 	@OneToMany(mappedBy = "mainStore")
 	private List<Store> subStores = new ArrayList<>();
 	
+	@Setter
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+	
+	@OneToMany(mappedBy = "store")
+	private List<Product> products = new ArrayList<>();
+	
+	
+	@OneToMany(mappedBy = "store")
+	private List<Order> orders = new ArrayList<>();
+	
 	public void changeUser(User user) {
 		this.user = user;
 		user.setStore(this);
 	}
 	
 	public void addProduct(Product product) {
-		products.add(product);
+		this.products.add(product);
 		product.setStore(this);
+	}
+	
+	public void addOrder(Order order) {
+		this.orders.add(order);
+		order.setStore(this);
 	}
 }

@@ -1,11 +1,14 @@
 package com.myapi.demo.domain;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -33,8 +36,16 @@ public class User {
 	@OneToOne(mappedBy="user", fetch = FetchType.LAZY)
 	private Store store;
 	
+	@OneToMany(mappedBy = "user")
+	private List<Order> orders;
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.setUser(this);
+	}
+	
+	public void addOrder(Order order) {
+		this.orders.add(order);
+		order.setUser(this);
 	}
 }
