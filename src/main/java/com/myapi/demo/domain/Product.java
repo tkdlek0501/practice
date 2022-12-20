@@ -33,9 +33,20 @@ public class Product {
 	@JoinColumn(name = "store_id")
 	private Store store;
 	
+	@Setter
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sub_category_id")
+	private SubCategory subCategory;
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.getProducts().add(this);
 	}
+	
+	public void changeSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
+		subCategory.getProducts().add(this);
+	}
+
 	
 }

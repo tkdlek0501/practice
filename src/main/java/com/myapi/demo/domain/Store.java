@@ -49,6 +49,9 @@ public class Store {
 	@OneToMany(mappedBy = "store")
 	private List<Order> orders = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "store")
+	private List<MainCategory> mainCategories = new ArrayList<>();
+	
 	public void changeUser(User user) {
 		this.user = user;
 		user.setStore(this);
@@ -62,5 +65,10 @@ public class Store {
 	public void addOrder(Order order) {
 		this.orders.add(order);
 		order.setStore(this);
+	}
+	
+	public void addMainCategory(MainCategory mainCategory) {
+		this.mainCategories.add(mainCategory);
+		mainCategory.setStore(this);
 	}
 }
