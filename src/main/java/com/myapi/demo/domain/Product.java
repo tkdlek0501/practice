@@ -1,10 +1,14 @@
 package com.myapi.demo.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +42,9 @@ public class Product {
 	@JoinColumn(name = "sub_category_id")
 	private SubCategory subCategory;
 	
+	@OneToMany(mappedBy = "product")
+	private List<OptionGroup> optionGroups = new ArrayList<>();
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.getProducts().add(this);
@@ -48,5 +55,8 @@ public class Product {
 		subCategory.getProducts().add(this);
 	}
 
-	
+	public void addOptionGroup(OptionGroup optionGroup) {
+		this.optionGroups.add(optionGroup);
+		optionGroup.setProduct(this);
+	}
 }
