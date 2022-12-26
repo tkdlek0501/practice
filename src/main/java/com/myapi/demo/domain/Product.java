@@ -45,6 +45,9 @@ public class Product {
 	@OneToMany(mappedBy = "product")
 	private List<OptionGroup> optionGroups = new ArrayList<>();
 	
+	@OneToMany(mappedBy = "product")
+	private List<OrderDetail> orderDetails = new ArrayList<>();
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.getProducts().add(this);
@@ -58,5 +61,10 @@ public class Product {
 	public void addOptionGroup(OptionGroup optionGroup) {
 		this.optionGroups.add(optionGroup);
 		optionGroup.setProduct(this);
+	}
+	
+	public void addOrderDetail(OrderDetail orderDetail) {
+		this.orderDetails.add(orderDetail);
+		orderDetail.setProduct(this);
 	}
 }

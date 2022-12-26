@@ -1,5 +1,8 @@
 package com.myapi.demo.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -36,6 +39,8 @@ public class Order {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	private List<OrderDetail> orderDetails = new ArrayList<>();
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.getOrders().add(this);
@@ -44,5 +49,10 @@ public class Order {
 	public void changeUser(User user) {
 		this.user = user;
 		user.getOrders().add(this);
+	}
+	
+	public void addOrderDetail(OrderDetail orderDetail) {
+		this.orderDetails.add(orderDetail);
+		orderDetail.setOrder(this);
 	}
 }
