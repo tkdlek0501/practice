@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -41,6 +42,11 @@ public class Order {
 	
 	private List<OrderDetail> orderDetails = new ArrayList<>();
 	
+	@Setter
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "payment_id")
+	private Payment payment;
+	
 	public void changeStore(Store store) {
 		this.store = store;
 		store.getOrders().add(this);
@@ -54,5 +60,11 @@ public class Order {
 	public void addOrderDetail(OrderDetail orderDetail) {
 		this.orderDetails.add(orderDetail);
 		orderDetail.setOrder(this);
+	}
+	
+	public void changePayment(Payment payment) {
+		this.payment = payment;
+		payment.setOrder(this);
+		
 	}
 }
