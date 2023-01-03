@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -40,6 +41,7 @@ public class Order {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@OneToMany(mappedBy = "order")
 	private List<OrderDetail> orderDetails = new ArrayList<>();
 	
 	@Setter
