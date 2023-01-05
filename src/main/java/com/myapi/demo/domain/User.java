@@ -1,5 +1,7 @@
 package com.myapi.demo.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -12,13 +14,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Table(name = "users") // user는 예약어라 사용 불가
-public class User {
+public class User implements UserDetails{
 	
 	@Id @GeneratedValue
 	private Long id;
@@ -47,5 +53,38 @@ public class User {
 	public void addOrder(Order order) {
 		this.orders.add(order);
 		order.setUser(this);
+	}
+	
+	// 권한
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		String type = String.valueOf(this.type);
+		authorities.add(new SimpleGrantedAuthority("ROLE_" + type)); // hasrole에서 ROLE_ 로 판단
+		return authorities;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
