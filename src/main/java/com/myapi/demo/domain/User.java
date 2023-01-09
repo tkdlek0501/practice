@@ -18,11 +18,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users") // user는 예약어라 사용 불가
 public class User implements UserDetails{
 	
@@ -53,6 +59,10 @@ public class User implements UserDetails{
 	public void addOrder(Order order) {
 		this.orders.add(order);
 		order.setUser(this);
+	}
+	
+	public void changePassword(String password) {
+		this.password = password;
 	}
 	
 	// 권한

@@ -30,9 +30,9 @@ public class SecurityConfig{
 				.disable() //csrf 토큰 비활성화 (테스트 시 걸어두는 게 좋음)
 			.authorizeRequests() // HttpServletRequest 을 사용하여 접근제한 설정 가능
 				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-				.antMatchers("/login/**").anonymous()
-				.antMatchers("/admin/**").hasRole("ADMIN")
-				.antMatchers("/user/**").hasAnyRole("ADMIN", "USER")
+				.antMatchers("/v1.0/acount/**").anonymous()
+				.antMatchers("/v1.0/admin/**").hasRole("ADMIN")
+				.antMatchers("/v1.0/user/**").hasAnyRole("ADMIN", "USER")
 				.anyRequest().permitAll() 
 			.and()
 			.formLogin() 
