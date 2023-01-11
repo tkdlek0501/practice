@@ -8,6 +8,6 @@ import com.myapi.demo.domain.Product;
 
 public interface ProductRepository extends JpaRepository<Product, Long>{
 	
-	Optional<Product> findByIdAndExpiredAtIsNull(Long id);
+	//Optional<Product> findByIdAndExpiredAtIsNull(Long id);
 	
 }

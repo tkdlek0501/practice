@@ -57,7 +57,15 @@ public class SecurityConfig{
 	
 	// 시큐리티 설정에 굳이 포함 안해도 되는 매핑 경로 (css 등)
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+		web.ignoring()
+		.antMatchers(
+				"/swagger-resources"
+	            , "/swagger-resources/configuration/ui"
+	            , "/swagger-resources/configuration/security"
+	            , "/swagger-ui.html"
+	            , "/swagger-ui/"
+		)
+		.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 		//web.ignoring().antMatchers("/static/**", "/assets/**");
 	}
 }
