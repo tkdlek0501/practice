@@ -6,11 +6,15 @@ import javax.validation.constraints.Pattern;
 import com.myapi.demo.domain.User;
 import com.myapi.demo.domain.UserType;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 @Getter
 @ToString
+@Builder
+@AllArgsConstructor
 public class CreateUserRequest {
 	
 	@NotBlank(message = "아이디를 입력해주세요.")

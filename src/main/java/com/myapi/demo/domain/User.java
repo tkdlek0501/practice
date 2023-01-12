@@ -23,12 +23,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = {"store", "orders"})
 @Table(name = "users") // user는 예약어라 사용 불가
 public class User implements UserDetails{
 	
