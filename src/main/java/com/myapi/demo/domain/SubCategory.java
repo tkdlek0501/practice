@@ -15,10 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-public class SubCategory {
-	
-	@Id
-	private Long id;
+public class SubCategory extends AuditEntity{
 	
 	private String name;
 	

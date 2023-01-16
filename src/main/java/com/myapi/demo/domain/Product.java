@@ -15,10 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-public class Product {
-	
-	@Id
-	private Long id;
+public class Product extends AuditEntity{
 	
 	private String name;
 	

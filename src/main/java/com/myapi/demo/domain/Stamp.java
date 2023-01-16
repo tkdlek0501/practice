@@ -1,14 +1,13 @@
 package com.myapi.demo.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import lombok.Getter;
+
+@Getter
 @Entity
-public class Stamp {
-	
-	@Id
-	private Long id;
+public class Stamp extends AuditEntity{
 	
 	private String name;
 }

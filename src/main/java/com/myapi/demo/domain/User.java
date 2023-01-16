@@ -32,10 +32,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString(exclude = {"store", "orders"})
 @Table(name = "users") // user는 예약어라 사용 불가
-public class User implements UserDetails{
-	
-	@Id @GeneratedValue
-	private Long id;
+public class User extends AuditEntity implements UserDetails {
 	
 	@Enumerated(EnumType.STRING)
 	private UserType type;

@@ -2,17 +2,15 @@ package com.myapi.demo.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.Getter;
 import lombok.Setter;
 
+@Getter
 @Entity
-public class OrderDetailOptionMap {
-	
-	@Id
-	private Long id;
+public class OrderDetailOptionMap extends AuditEntity{
 	
 	private String name;
 	

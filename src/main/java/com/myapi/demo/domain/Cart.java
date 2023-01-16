@@ -1,15 +1,14 @@
 package com.myapi.demo.domain;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
+import lombok.Getter;
+
+@Getter
 @Entity
-public class Cart {
+public class Cart extends AuditEntity{
 	
-	@Id
-	private Long id;
+
 	
 	
 }

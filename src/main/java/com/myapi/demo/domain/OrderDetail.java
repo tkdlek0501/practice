@@ -15,10 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Getter
-public class OrderDetail {
-	
-	@Id
-	private Long id;
+public class OrderDetail extends AuditEntity{
 	
 	private String name;
 	
