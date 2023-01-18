@@ -10,11 +10,19 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import com.myapi.demo.request.ProductRequest;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product extends AuditEntity{
 	
 	private String name;
@@ -64,4 +72,5 @@ public class Product extends AuditEntity{
 		this.orderDetails.add(orderDetail);
 		orderDetail.setProduct(this);
 	}
+	
 }
