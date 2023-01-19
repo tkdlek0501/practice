@@ -1,5 +1,7 @@
 package com.myapi.demo.request;
 
+import java.util.ArrayList;
+
 import javax.validation.constraints.NotBlank;
 
 import com.myapi.demo.domain.PriceControlType;
@@ -41,6 +43,7 @@ public class ProductRequest {
 		.quantity(request.getQuantity())
 		.isSoldOut(request.getIsSoldOut())
 		.priceControlType(request.getPriceControlType())
+		.optionGroups(new ArrayList<>()) // product생성시 optionGroup도 생성 (persist) 하기 위해 미리
 		.build();
 	}
 	
