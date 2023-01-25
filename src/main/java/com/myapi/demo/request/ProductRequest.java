@@ -10,12 +10,14 @@ import com.myapi.demo.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @ToString
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductRequest {
 	
 	@NotBlank(message = "상품 이름을 입력해주세요.")
@@ -34,6 +36,7 @@ public class ProductRequest {
 	
 	@NotBlank(message = "상품의 관리 주체를 입력해주세요.")
 	private PriceControlType priceControlType;
+	
 	
 	public Product toEntity(ProductRequest request) {
 		return Product.builder()

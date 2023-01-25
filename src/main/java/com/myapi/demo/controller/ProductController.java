@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.myapi.demo.request.ProductCreateRequest;
 import com.myapi.demo.request.ProductRequest;
 import com.myapi.demo.service.ProductService;
 
@@ -23,7 +24,7 @@ public class ProductController {
 	private final ProductService productService;
 	
 	@PostMapping("")
-	public ResponseEntity<Void> create(@Valid @RequestBody ProductRequest request) {
+	public ResponseEntity<Void> create(@Valid @RequestBody ProductCreateRequest request) {
 		
 		productService.create(request);
 		return ResponseEntity.ok(null);
