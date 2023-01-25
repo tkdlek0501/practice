@@ -29,6 +29,7 @@ public class ProductService {
 		OptionGroup optionGroup = request.getOptionGroupRequest().toEntity(request.getOptionGroupRequest());
 		Option option = request.getOptionRequest().toEntity(request.getOptionRequest());
 		
+		// TODO: 매장, 카테고리 생성 선행
 		// TODO: optionGroup, option을 list로 받아올 수 있게
 		optionGroup.addOption(option);
 		product.addOptionGroup(optionGroup);
