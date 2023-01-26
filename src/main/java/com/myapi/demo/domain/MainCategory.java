@@ -5,16 +5,21 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MainCategory extends AuditEntity{
 	
 	private String name;
@@ -24,6 +29,7 @@ public class MainCategory extends AuditEntity{
 	@JoinColumn(name = "store_id")
 	private Store store;
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "mainCategory")
 	private List<SubCategory> subCategories = new ArrayList<>();
 	

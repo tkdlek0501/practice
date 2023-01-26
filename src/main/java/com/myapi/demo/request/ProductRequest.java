@@ -37,7 +37,6 @@ public class ProductRequest {
 	@NotBlank(message = "상품의 관리 주체를 입력해주세요.")
 	private PriceControlType priceControlType;
 	
-	
 	public Product toEntity(ProductRequest request) {
 		return Product.builder()
 		.name(request.getName())

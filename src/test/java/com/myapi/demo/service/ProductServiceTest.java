@@ -2,18 +2,30 @@ package com.myapi.demo.service;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.myapi.demo.domain.MainCategory;
 import com.myapi.demo.domain.Option;
 import com.myapi.demo.domain.OptionGroup;
 import com.myapi.demo.domain.PriceControlType;
 import com.myapi.demo.domain.Product;
+import com.myapi.demo.domain.Store;
+import com.myapi.demo.domain.SubCategory;
+import com.myapi.demo.domain.User;
+import com.myapi.demo.domain.UserType;
+import com.myapi.demo.repository.MainCategoryRepository;
 import com.myapi.demo.repository.ProductRepository;
+import com.myapi.demo.repository.StoreRepository;
+import com.myapi.demo.repository.SubCategoryRepository;
+import com.myapi.demo.repository.UserRepository;
 import com.myapi.demo.request.OptionGroupRequest;
 import com.myapi.demo.request.OptionRequest;
 import com.myapi.demo.request.ProductRequest;
@@ -28,10 +40,58 @@ public class ProductServiceTest {
 	
 	@Autowired ProductRepository productRepository;
 	
+	@Autowired StoreRepository storeRepository;
+	
+	@Autowired MainCategoryRepository mainCategoryRepository;
+	
+	@Autowired SubCategoryRepository subCategoryRepository;
+	
+	@Autowired UserRepository userRepository;
+	
+	@Autowired PasswordEncoder passwordEncoder;
+	
 	// 상품 생성
 	@Test
 	public void create() {
 		// given
+		
+		// user
+		User user = User.builder()
+				.username("이름1")
+				.password(passwordEncoder.encode("abcde"))
+				.nickname("닉네임1")
+				.type(UserType.MAINMALL)
+				.build();
+		User createdUser = userRepository.save(user);
+		User findUser = userRepository.findById(createdUser.getId()).orElse(null);
+		
+		// store
+		Store store = Store.builder()
+		.name("매장1")
+		.businessNo("12345")
+		.description("첫번째 매장입니다.")
+		.build();
+		store.changeUser(findUser);
+		Store createdStore = storeRepository.save(store);
+		Store findStore = storeRepository.findById(createdStore.getId()).orElse(null);
+		
+		// category
+		MainCategory mainCategory = MainCategory.builder()
+				.name("메인카테고리1")
+				.build();
+		mainCategory.changeStore(findStore);
+		MainCategory createdMainCategory = mainCategoryRepository.save(mainCategory);
+		MainCategory findMainCategory = mainCategoryRepository.findById(createdMainCategory.getId()).orElse(null);
+		
+		SubCategory subCategory = SubCategory.builder()
+				.name("서브카테고리1")
+				.build();
+		subCategory.changeMainCategory(findMainCategory);
+		SubCategory createdSubCategory = subCategoryRepository.save(subCategory);
+		SubCategory findSubCategory = subCategoryRepository.findById(createdSubCategory.getId()).orElse(null);
+		log.info("findSubCategory : {}", findSubCategory);
+		
+		// product
 		ProductRequest productRequest = ProductRequest.builder()
 				.name("상품1")
 				.price(1000)
@@ -55,6 +115,8 @@ public class ProductServiceTest {
 		Option option = optionRequest.toEntity(optionRequest);
 		optionGroup.addOption(option);
 		product.addOptionGroup(optionGroup);
+		product.changeStore(findStore);
+		product.changeSubCategory(findSubCategory);
 		
 		Product createdProduct = productRepository.save(product);
 		

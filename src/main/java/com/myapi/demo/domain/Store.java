@@ -13,12 +13,15 @@ import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
+@ToString(exclude = {"mainStore", "subStores", "user", "products", "orders", "mainCategories"})
 public class Store extends AuditEntity{
 	
 	private String name;
@@ -34,6 +37,7 @@ public class Store extends AuditEntity{
 	@JoinColumn(name = "parent_id", referencedColumnName = "id")
 	private Store mainStore;
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "mainStore")
 	private List<Store> subStores = new ArrayList<>();
 	
@@ -42,13 +46,15 @@ public class Store extends AuditEntity{
 	@JoinColumn(name = "user_id")
 	private User user;
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "store")
 	private List<Product> products = new ArrayList<>();
 	
-	
+	@Builder.Default
 	@OneToMany(mappedBy = "store")
 	private List<Order> orders = new ArrayList<>();
 	
+	@Builder.Default
 	@OneToMany(mappedBy = "store")
 	private List<MainCategory> mainCategories = new ArrayList<>();
 	

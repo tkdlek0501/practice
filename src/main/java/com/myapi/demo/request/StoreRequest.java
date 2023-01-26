@@ -1,5 +1,7 @@
 package com.myapi.demo.request;
 
+import java.util.ArrayList;
+
 import javax.validation.constraints.NotBlank;
 
 import com.myapi.demo.domain.Store;
