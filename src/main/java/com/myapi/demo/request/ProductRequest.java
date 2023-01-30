@@ -1,6 +1,7 @@
 package com.myapi.demo.request;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.validation.constraints.NotBlank;
 
@@ -36,6 +37,9 @@ public class ProductRequest {
 	
 	@NotBlank(message = "상품의 관리 주체를 입력해주세요.")
 	private PriceControlType priceControlType;
+	
+	@Builder.Default
+	private List<OptionGroupRequest> optionGroupRequests = new ArrayList<>();
 	
 	public Product toEntity(ProductRequest request) {
 		return Product.builder()

@@ -12,8 +12,4 @@ public class ProductCreateRequest {
 	
 	private ProductRequest productRequest;
 	
-	private OptionGroupRequest optionGroupRequest;
-	
-	private OptionRequest optionRequest;
-	
 }

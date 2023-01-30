@@ -3,6 +3,9 @@ package com.myapi.demo.service;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -89,7 +92,6 @@ public class ProductServiceTest {
 		subCategory.changeMainCategory(findMainCategory);
 		SubCategory createdSubCategory = subCategoryRepository.save(subCategory);
 		SubCategory findSubCategory = subCategoryRepository.findById(createdSubCategory.getId()).orElse(null);
-		log.info("findSubCategory : {}", findSubCategory);
 		
 		// product
 		ProductRequest productRequest = ProductRequest.builder()
@@ -101,22 +103,33 @@ public class ProductServiceTest {
 				.priceControlType(PriceControlType.MAINMALL)
 				.build();
 		
-		OptionGroupRequest optionGroupRequest = OptionGroupRequest.builder()
-				.name("옵션그룹1")
-				.build();
-		
 		OptionRequest optionRequest = OptionRequest.builder()
 				.name("옵션1")
 				.build();
 		
+		OptionGroupRequest optionGroupRequest = OptionGroupRequest.builder()
+				.name("옵션그룹1")
+				.build();
+		
+		optionGroupRequest.getOptionRequests().add(optionRequest);
+		productRequest.getOptionGroupRequests().add(optionGroupRequest);
+		
 		// when
 		Product product = productRequest.toEntity(productRequest);
-		OptionGroup optionGroup = optionGroupRequest.toEntity(optionGroupRequest);
-		Option option = optionRequest.toEntity(optionRequest);
-		optionGroup.addOption(option);
-		product.addOptionGroup(optionGroup);
+		
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
+		
+		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
+				.map(ogr -> {
+					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+					options.forEach(opt -> optionGroup.addOption(opt));
+					return optionGroup;
+				})
+				.collect(Collectors.toList());
+		
+		optionGroups.forEach(og -> product.addOptionGroup(og));
 		
 		Product createdProduct = productRepository.save(product);
 		

@@ -20,7 +20,7 @@ public class OptionRequest {
 	@NotBlank(message = "옵션 이름을 입력해주세요.")
 	private String name;
 	
-	public Option toEntity(OptionRequest optionRequest) {
+	public static Option toEntity(OptionRequest optionRequest) {
 		return Option.builder()
 		.name(optionRequest.getName())
 		.build();
