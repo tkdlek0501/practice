@@ -24,6 +24,8 @@ import com.myapi.demo.domain.Store;
 import com.myapi.demo.domain.SubCategory;
 import com.myapi.demo.domain.User;
 import com.myapi.demo.domain.UserType;
+import com.myapi.demo.dto.ProductSearchCondition;
+import com.myapi.demo.dto.ProductSearchDto;
 import com.myapi.demo.repository.MainCategoryRepository;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
@@ -141,5 +143,78 @@ public class ProductServiceTest {
 		assertEquals(createdProduct.getOptionGroups().get(0), findProduct.getOptionGroups().get(0));
 		log.info("option : {}", findProduct.getOptionGroups().get(0).getOptions().get(0));
 		assertEquals(createdProduct.getOptionGroups().get(0).getOptions().get(0), findProduct.getOptionGroups().get(0).getOptions().get(0));
+	}
+	
+	@Test
+	public void search() {
+		// given
+		
+		// user
+		User user = User.builder()
+				.username("이름1")
+				.password(passwordEncoder.encode("abcde"))
+				.nickname("닉네임1")
+				.type(UserType.MAINMALL)
+				.build();
+		User createdUser = userRepository.save(user);
+		User findUser = userRepository.findById(createdUser.getId()).orElse(null);
+		
+		// store
+		Store store = Store.builder()
+		.name("매장1")
+		.businessNo("12345")
+		.description("첫번째 매장입니다.")
+		.build();
+		store.changeUser(findUser);
+		Store createdStore = storeRepository.save(store);
+		Store findStore = storeRepository.findById(createdStore.getId()).orElse(null);
+		
+		// category
+		MainCategory mainCategory = MainCategory.builder()
+				.name("메인카테고리1")
+				.build();
+		mainCategory.changeStore(findStore);
+		MainCategory createdMainCategory = mainCategoryRepository.save(mainCategory);
+		MainCategory findMainCategory = mainCategoryRepository.findById(createdMainCategory.getId()).orElse(null);
+		
+		SubCategory subCategory = SubCategory.builder()
+				.name("서브카테고리1")
+				.build();
+		subCategory.changeMainCategory(findMainCategory);
+		SubCategory createdSubCategory = subCategoryRepository.save(subCategory);
+		SubCategory findSubCategory = subCategoryRepository.findById(createdSubCategory.getId()).orElse(null);
+		
+		// product
+		ProductRequest productRequest = ProductRequest.builder()
+				.name("상품1")
+				.price(1000)
+				.code("M0001")
+				.quantity(100)
+				.isSoldOut(false)
+				.priceControlType(PriceControlType.MAINMALL)
+				.build();
+		
+		OptionRequest optionRequest = OptionRequest.builder()
+				.name("옵션1")
+				.build();
+		
+		OptionGroupRequest optionGroupRequest = OptionGroupRequest.builder()
+				.name("옵션그룹1")
+				.build();
+		
+		optionGroupRequest.getOptionRequests().add(optionRequest);
+		productRequest.getOptionGroupRequests().add(optionGroupRequest);
+		
+		ProductSearchCondition condition = ProductSearchCondition.builder()
+				.priceGoe(500)
+				.priceLoe(2000)
+				.build();
+		
+		
+		// when
+		List<ProductSearchDto> productSearchDto = productRepository.search(condition);
+		
+		// then
+		log.info("productSearchDto : {}", productSearchDto);
 	}
 }

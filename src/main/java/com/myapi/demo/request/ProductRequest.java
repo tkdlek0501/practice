@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.myapi.demo.domain.PriceControlType;
 import com.myapi.demo.domain.Product;
+import com.sun.istack.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,6 +41,12 @@ public class ProductRequest {
 	
 	@Builder.Default
 	private List<OptionGroupRequest> optionGroupRequests = new ArrayList<>();
+	
+//	@NotNull // test시 주석
+	private Long storeId;
+	
+//	@NotNull // test시 주석
+	private Long subCategoryId;
 	
 	public Product toEntity(ProductRequest request) {
 		return Product.builder()

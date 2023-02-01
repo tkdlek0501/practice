@@ -44,6 +44,8 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 						)
 				.fetch();
 	}
+	// 02.02 : class의 필드를 변경했으면 QClass에도 반영하기 위해 새로 build를 해주던가, QClass를 직접 수정해줘야 한다
+	// 안그러면 Consturtor 타입 에러가 난다
 	
 	private BooleanExpression priceGoe(Integer priceGoe) {
 		return priceGoe != null ? product.price.goe(priceGoe) : null;

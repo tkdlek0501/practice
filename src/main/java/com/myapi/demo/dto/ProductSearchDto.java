@@ -1,9 +1,13 @@
 package com.myapi.demo.dto;
 
 import com.myapi.demo.domain.PriceControlType;
-import com.myapi.demo.domain.UserType;
 import com.querydsl.core.annotations.QueryProjection;
 
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
 public class ProductSearchDto {
 	private Long storeId;
 	
