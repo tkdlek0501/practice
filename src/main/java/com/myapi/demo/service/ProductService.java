@@ -13,6 +13,8 @@ import com.myapi.demo.domain.Store;
 import com.myapi.demo.domain.SubCategory;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
+import com.myapi.demo.exception.NotFoundStoreException;
+import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -40,8 +42,11 @@ public class ProductService {
 		
 		log.info("ProductCreateRequest : {}", request);
 		
-		SubCategory subCategory = subCategoryRepository.findById(request.getProductRequest().getSubCategoryId()).orElse(null);
-		Store store = storeRepository.findById(request.getProductRequest().getStoreId()).orElse(null);
+		SubCategory subCategory = subCategoryRepository.findById(request.getProductRequest().getSubCategoryId())
+				.orElseThrow(() -> new NotFoundSubCategoryException(null));
+				
+		Store store = storeRepository.findById(request.getProductRequest().getStoreId())
+				.orElseThrow(() -> new NotFoundStoreException(null));
 		
 		Product product = request.getProductRequest().toEntity(request.getProductRequest());
 		

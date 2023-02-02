@@ -34,8 +34,7 @@ public class AcountController {
 	}
 	
 	// TODO: swaggger 도입
-	// TODO: test 코드 작성하기
-	//@ApiImplication(value = "회원가입")
+//	@ApiImplication(value = "회원가입")
 	@PostMapping("/join")
 	public ResponseEntity<Void> join(
 			@Validated @RequestBody CreateUserRequest request,
