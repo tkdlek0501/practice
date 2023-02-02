@@ -11,6 +11,8 @@ import com.myapi.demo.domain.OptionGroup;
 import com.myapi.demo.domain.Product;
 import com.myapi.demo.domain.Store;
 import com.myapi.demo.domain.SubCategory;
+import com.myapi.demo.dto.ProductSearchCondition;
+import com.myapi.demo.dto.ProductSearchDto;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -38,7 +40,6 @@ public class ProductService {
 		
 		log.info("ProductCreateRequest : {}", request);
 		
-		// TODO: test 코드대로 반영하기
 		SubCategory subCategory = subCategoryRepository.findById(request.getProductRequest().getSubCategoryId()).orElse(null);
 		Store store = storeRepository.findById(request.getProductRequest().getStoreId()).orElse(null);
 		
@@ -58,6 +59,12 @@ public class ProductService {
 		optionGroups.forEach(og -> product.addOptionGroup(og));
 		
 		productRepository.save(product);
+	}
+	
+	public List<ProductSearchDto> search(ProductSearchCondition request){
+		
+		return productRepository.search(request);
+		
 	}
 	
 }
