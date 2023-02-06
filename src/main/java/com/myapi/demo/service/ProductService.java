@@ -3,6 +3,7 @@ package com.myapi.demo.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import com.myapi.demo.repository.SubCategoryRepository;
 import com.myapi.demo.request.OptionGroupRequest;
 import com.myapi.demo.request.OptionRequest;
 import com.myapi.demo.request.ProductCreateRequest;
+import com.myapi.demo.request.ProductUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,8 @@ public class ProductService {
 	private final StoreRepository storeRepository;
 	
 	private final SubCategoryRepository subCategoryRepository;
+	
+	private final ApplicationEventPublisher eventPublisher;
 	
 	@Transactional
 	public void create(ProductCreateRequest request) {
@@ -70,6 +74,18 @@ public class ProductService {
 		
 		return productRepository.search(request);
 		
+	}
+	
+	public void update(ProductUpdateRequest request) {
+		
+		Product product = productRepository.findById(request.getId()).orElse(null);
+		// TODO: orElse -> orElseThrow with Exception
+		
+		Product updateProduct = request.toEntity(request);
+		product.update(updateProduct);
+		
+		// TODO: event
+		// eventPublisher.publishEvent(new updatedProductEvent(product));
 	}
 	
 }

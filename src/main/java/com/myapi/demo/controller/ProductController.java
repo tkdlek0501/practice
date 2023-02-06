@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
 import com.myapi.demo.request.ProductCreateRequest;
-import com.myapi.demo.request.ProductRequest;
+import com.myapi.demo.request.ProductUpdateRequest;
 import com.myapi.demo.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,13 @@ public class ProductController {
 	public ResponseEntity<List<ProductSearchDto>> search(ProductSearchCondition request){
 		
 		return ResponseEntity.ok(productService.search(request));
+	}
+	
+	@PutMapping("")
+	public ResponseEntity<Void> update(@Valid @RequestBody ProductUpdateRequest request){
+		
+		productService.update(request);
+		return ResponseEntity.ok(null);
+		
 	}
 }

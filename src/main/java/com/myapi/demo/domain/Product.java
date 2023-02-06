@@ -31,8 +31,6 @@ public class Product extends AuditEntity{
 	
 	private String code;
 	
-	private int quantity;
-	
 	private boolean isSoldOut;
 	
 	private PriceControlType priceControlType;
@@ -71,6 +69,14 @@ public class Product extends AuditEntity{
 	public void addOrderDetail(OrderDetail orderDetail) {
 		this.orderDetails.add(orderDetail);
 		orderDetail.setProduct(this);
+	}
+	
+	
+	public void update(Product product) {
+		this.name = product.getName();
+		this.price = product.getPrice();
+		this.isSoldOut = product.isSoldOut();
+		this.priceControlType = product.getPriceControlType();
 	}
 	
 }
