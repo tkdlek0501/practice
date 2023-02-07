@@ -22,10 +22,6 @@ public class ProductLog extends AuditEntity{
 	
 	private int updatePrice;
 	
-	private int orgQuantity;
-	
-	private int updateQuantity;
-	
 	private boolean orgIsSoldOut;
 	
 	private boolean updateIsSoldOut;

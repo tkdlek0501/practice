@@ -53,7 +53,6 @@ public class ProductRequest {
 		.name(request.getName())
 		.price(request.getPrice())
 		.code(request.getCode())
-		.quantity(request.getQuantity())
 		.isSoldOut(request.getIsSoldOut())
 		.priceControlType(request.getPriceControlType())
 		.optionGroups(new ArrayList<>()) // product생성시 optionGroup도 생성 (persist) 하기 위해 미리
