@@ -3,6 +3,7 @@ package com.myapi.demo.event.dto;
 import com.myapi.demo.domain.PriceControlType;
 import com.myapi.demo.domain.Product;
 import com.myapi.demo.domain.ProductLog;
+import com.myapi.demo.dto.TempProduct;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,19 +34,6 @@ public class UpdatedProductEvent {
 	
 	private PriceControlType updatePriceControlType;
 	
-	public static UpdatedProductEvent toEvent(Product orgProduct, Product updateProduct) {
-		
-		return UpdatedProductEvent.builder()
-			.orgName(orgProduct.getName())
-			.updateName(updateProduct.getName())
-			.orgPrice(orgProduct.getPrice())
-			.updatePrice(updateProduct.getPrice())
-			.orgPriceControlType(orgProduct.getPriceControlType())
-			.updatePriceControlType(updateProduct.getPriceControlType())
-			.build();
-		
-	}
-	
 	public static ProductLog toEntity(UpdatedProductEvent event) {
 		
 		return ProductLog.builder()
@@ -60,12 +48,12 @@ public class UpdatedProductEvent {
 				.build();	
 	}
 	
-	public UpdatedProductEvent(Product orgProduct, Product updateProduct) {
+	public UpdatedProductEvent(TempProduct orgProduct, Product updateProduct) {
 		this.orgName = orgProduct.getName();
 		this.updateName = updateProduct.getName();
 		this.orgPrice = orgProduct.getPrice();
 		this.updatePrice = updateProduct.getPrice();
-		this.orgIsSoldOut = orgProduct.isSoldOut();
+		this.orgIsSoldOut = orgProduct.getIsSoldOut();
 		this.updateIsSoldOut = updateProduct.isSoldOut();
 		this.orgPriceControlType = orgProduct.getPriceControlType();
 		this.updatePriceControlType = updateProduct.getPriceControlType();

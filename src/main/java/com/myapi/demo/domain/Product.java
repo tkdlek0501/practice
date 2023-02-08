@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -15,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Entity
@@ -23,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
+@ToString(exclude = {"store", "subCategory", "optionGroups", "orderDetails"})
 public class Product extends AuditEntity{
 	
 	private String name;
@@ -33,6 +37,7 @@ public class Product extends AuditEntity{
 	
 	private boolean isSoldOut;
 	
+	@Enumerated(EnumType.STRING)
 	private PriceControlType priceControlType;
 	
 	@Setter

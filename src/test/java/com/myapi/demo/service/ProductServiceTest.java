@@ -29,6 +29,7 @@ import com.myapi.demo.domain.User;
 import com.myapi.demo.domain.UserType;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
+import com.myapi.demo.dto.TempProduct;
 import com.myapi.demo.event.dto.UpdatedProductEvent;
 import com.myapi.demo.repository.MainCategoryRepository;
 import com.myapi.demo.repository.ProductRepository;
@@ -304,7 +305,8 @@ public class ProductServiceTest {
 		
 		Product createdProduct = productRepository.save(product);
 		
-		Product orgProduct = productRepository.findById(createdProduct.getId()).orElse(null);
+		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
+		
 		ProductUpdateRequest productUpdateRequest = ProductUpdateRequest.builder()
 				.name("상품2")
 				.price(2000)
@@ -315,17 +317,21 @@ public class ProductServiceTest {
 		Product updateProduct = productUpdateRequest.toEntity(productUpdateRequest);
 		
 		// when
-		orgProduct.update(updateProduct);
-		eventPublisher.publishEvent(new UpdatedProductEvent(orgProduct, updateProduct));
+		TempProduct tempProduct = TempProduct.toTempProduct(findProduct); // 원래 내용 임시 저장용 dto
+		
+		findProduct.update(updateProduct);
+		log.info("update 쿼리 실행 시점 확인");
+
+		eventPublisher.publishEvent(new UpdatedProductEvent(tempProduct, updateProduct));
 		// UpdatedProductEvent.toEvent(orgProduct, updateProduct)
 		
 		// then
-		Product findProduct = productRepository.findById(orgProduct.getId()).orElse(null);
+		Product renewProduct = productRepository.findById(findProduct.getId()).orElse(null);
 		
-		assertEquals(updateProduct.getName(), findProduct.getName());
-		assertEquals(updateProduct.getPrice(), findProduct.getPrice());
-		assertEquals(updateProduct.isSoldOut(), findProduct.isSoldOut());
-		assertEquals(updateProduct.getPriceControlType(), findProduct.getPriceControlType());
+		assertEquals(updateProduct.getName(), renewProduct.getName());
+		assertEquals(updateProduct.getPrice(), renewProduct.getPrice());
+		assertEquals(updateProduct.isSoldOut(), renewProduct.isSoldOut());
+		assertEquals(updateProduct.getPriceControlType(), renewProduct.getPriceControlType());
 
 	}
 }

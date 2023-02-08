@@ -1,6 +1,8 @@
 package com.myapi.demo.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,8 +28,10 @@ public class ProductLog extends AuditEntity{
 	
 	private boolean updateIsSoldOut;
 	
+	@Enumerated(EnumType.STRING)
 	private PriceControlType orgPriceControlType;
 	
+	@Enumerated(EnumType.STRING)
 	private PriceControlType updatePriceControlType;
 	
 }
