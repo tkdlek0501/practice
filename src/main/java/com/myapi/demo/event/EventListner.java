@@ -25,12 +25,8 @@ public class EventListner {
 	@TransactionalEventListener
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public void handleUpdatedProductEvent(UpdatedProductEvent event) {
-		// TODO: test시 원래값과 변경값이 제대로 들어오는지 확인
-		// (조회 시점과 update 시점 확인 필요)
 		
-		log.info("UpdatedProductEvent : {}", event);
 		ProductLog productLog = UpdatedProductEvent.toEntity(event);
 		ProductLog createdProductLog = productLogRepository.save(productLog);
-		log.info("createdProductLog : {}", createdProductLog);
 	}
 }

@@ -14,6 +14,9 @@ import com.myapi.demo.domain.Store;
 import com.myapi.demo.domain.SubCategory;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
+import com.myapi.demo.dto.TempProduct;
+import com.myapi.demo.event.dto.UpdatedProductEvent;
+import com.myapi.demo.exception.NotFoundProductException;
 import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.repository.ProductRepository;
@@ -78,14 +81,13 @@ public class ProductService {
 	
 	public void update(ProductUpdateRequest request) {
 		
-		Product product = productRepository.findById(request.getId()).orElse(null);
-		// TODO: orElse -> orElseThrow with Exception
+		Product product = productRepository.findById(request.getId()).orElseThrow(() -> new NotFoundProductException(null));
+		TempProduct tempProduct = TempProduct.toTempProduct(product);
 		
 		Product updateProduct = request.toEntity(request);
 		product.update(updateProduct);
 		
-		// TODO: event
-		// eventPublisher.publishEvent(new updatedProductEvent(product));
+		eventPublisher.publishEvent(new UpdatedProductEvent(tempProduct, updateProduct));
 	}
 	
 }
