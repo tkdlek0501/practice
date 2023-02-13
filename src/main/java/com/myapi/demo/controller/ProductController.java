@@ -29,7 +29,7 @@ public class ProductController {
 	
 	private final ProductService productService;
 	
-	@PostMapping("")
+	@PostMapping("") // 등록시 옵션 등록도 같이 (최소 1개의 옵션그룹과 옵션을 가져야 한다)
 	public ResponseEntity<Void> create(@Valid @RequestBody ProductCreateRequest request) {
 		
 		productService.create(request);
@@ -42,7 +42,7 @@ public class ProductController {
 		return ResponseEntity.ok(productService.search(request));
 	}
 	
-	@PutMapping("")
+	@PutMapping("") // 상품 수정과 옵션 수정은 별개
 	public ResponseEntity<Void> update(@Valid @RequestBody ProductUpdateRequest request){
 		
 		productService.update(request);
