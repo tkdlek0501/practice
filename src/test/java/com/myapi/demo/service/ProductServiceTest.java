@@ -336,7 +336,7 @@ public class ProductServiceTest {
 	}
 	
 	// 옵션은 개별적으로 추가, 수정, 삭제 api로 관리
-	// TODO : 옵션그룹 추가 (옵션까지 추가) - 추가시에는 defualt로 옵션그룹과 옵션이 1개씩 추가된다
+	// 옵션그룹 추가 (옵션까지 추가) - 추가시에는 defualt로 옵션그룹과 옵션이 1개씩 추가된다
 	@Test
 	@Rollback(false)
 	public void 옵션_그룹_추가() {
@@ -435,11 +435,102 @@ public class ProductServiceTest {
 		findProduct.addOptionGroup(addOptionGroup); // 옵션 그룹 추가
 	}
 	
-	// TODO : 옵션그룹 삭제 - 하위 옵션까지 삭제 
+	@Test
+	@Rollback(false)
+	public void 옵션_개별_추가() {
+		// given
+
+		// user
+		User user = User.builder()
+				.username("이름1")
+				.password(passwordEncoder.encode("abcde"))
+				.nickname("닉네임1")
+				.type(UserType.MAINMALL)
+				.build();
+		User createdUser = userRepository.save(user);
+		User findUser = userRepository.findById(createdUser.getId()).orElse(null);
+		
+		// store
+		Store store = Store.builder()
+		.name("매장1")
+		.businessNo("12345")
+		.description("첫번째 매장입니다.")
+		.build();
+		store.changeUser(findUser);
+		Store createdStore = storeRepository.save(store);
+		Store findStore = storeRepository.findById(createdStore.getId()).orElse(null);
+		
+		// category
+		MainCategory mainCategory = MainCategory.builder()
+				.name("메인카테고리1")
+				.build();
+		mainCategory.changeStore(findStore);
+		MainCategory createdMainCategory = mainCategoryRepository.save(mainCategory);
+		MainCategory findMainCategory = mainCategoryRepository.findById(createdMainCategory.getId()).orElse(null);
+		
+		SubCategory subCategory = SubCategory.builder()
+				.name("서브카테고리1")
+				.build();
+		subCategory.changeMainCategory(findMainCategory);
+		SubCategory createdSubCategory = subCategoryRepository.save(subCategory);
+		SubCategory findSubCategory = subCategoryRepository.findById(createdSubCategory.getId()).orElse(null);
+		
+		// product
+		ProductRequest productRequest = ProductRequest.builder()
+				.name("상품1")
+				.price(1000)
+				.code("M0001")
+				.quantity(100)
+				.isSoldOut(false)
+				.priceControlType(PriceControlType.MAINMALL)
+				.build();
+		
+		OptionRequest optionRequest = OptionRequest.builder()
+				.name("옵션1")
+				.build();
+		
+		OptionGroupRequest optionGroupRequest = OptionGroupRequest.builder()
+				.name("옵션그룹1")
+				.build();
+		
+		optionGroupRequest.getOptionRequests().add(optionRequest);
+		productRequest.getOptionGroupRequests().add(optionGroupRequest);
+		
+		Product product = productRequest.toEntity(productRequest);
+		
+		product.changeStore(findStore);
+		product.changeSubCategory(findSubCategory);
+		
+		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
+				.map(ogr -> {
+					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+					options.forEach(opt -> optionGroup.addOption(opt));
+					return optionGroup;
+				})
+				.collect(Collectors.toList());
+		
+		optionGroups.forEach(og -> product.addOptionGroup(og));
+		
+		Product createdProduct = productRepository.save(product);
+		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
+		// 위에 까지 상품 등록(옵션그룹, 옵션 포함) 로직
+		
+		// when
+		// 옵션 그룹에 옵션 개별적으로 추가
+		OptionGroup orgOptionGroup = findProduct.getOptionGroups().get(0); // 만들어진 옵션그룹 가져오기
+		Option addOption = Option.builder()
+				.name("추가 옵션")
+				.build();// 추가할 옵션
+		
+		orgOptionGroup.addOption(addOption); // 옵션 추가
+	}
 	
-	// TODO : 옵션 삭제
+	// TODO : 옵션그룹 개별 삭제 - 하위 옵션까지 삭제 
 	
-	// TODO : 옵션그룹 수정
+	// TODO : 옵션 개별 삭제
 	
-	// TODO : 옵션 수정
+	// TODO : 옵션그룹 개별 수정
+	
+	// TODO : 옵션 개별 수정
 }
