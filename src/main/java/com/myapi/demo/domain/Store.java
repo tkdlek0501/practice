@@ -21,6 +21,7 @@ import lombok.ToString;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString(exclude = {"mainStore", "subStores", "user", "products", "orders", "mainCategories"})
 public class Store extends AuditEntity{
 	
