@@ -32,7 +32,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom{
 					store.name.as("storeName"),
 					product.name.as("productName"),
 					product.code,
-					product.quantity,
 					product.isSoldOut,
 					product.priceControlType
 				))

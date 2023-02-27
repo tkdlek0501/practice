@@ -50,7 +50,7 @@ public class Product extends AuditEntity{
 	@JoinColumn(name = "sub_category_id")
 	private SubCategory subCategory;
 	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "product")
 	private List<OptionGroup> optionGroups = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "product")

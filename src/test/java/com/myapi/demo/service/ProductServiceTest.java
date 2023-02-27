@@ -75,6 +75,7 @@ public class ProductServiceTest {
 	
 	// 상품 생성
 	@Test
+	@Rollback(false)
 	public void create() {
 		// given
 		
@@ -134,28 +135,31 @@ public class ProductServiceTest {
 		optionGroupRequest.getOptionRequests().add(optionRequest);
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
-		// when
-		Product product = productRequest.toEntity(productRequest);
+		// 위에 까지 request 형식
 		
+		// when
+		// product 생성
+		Product product = productRequest.toEntity(productRequest);
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
-		
-		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				})
-				.collect(Collectors.toList());
-		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
-		
 		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
 		
 		// then
 		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
-		
 		
 		assertEquals(createdProduct, findProduct);
 		assertEquals(createdProduct.getOptionGroups().get(0), findProduct.getOptionGroups().get(0));
@@ -163,6 +167,7 @@ public class ProductServiceTest {
 		assertEquals(createdProduct.getOptionGroups().get(0).getOptions().get(0), findProduct.getOptionGroups().get(0).getOptions().get(0));
 	}
 	
+	// TODO: impl 수정 필요
 	@Test
 	public void search() {
 		// given
@@ -223,6 +228,28 @@ public class ProductServiceTest {
 		optionGroupRequest.getOptionRequests().add(optionRequest);
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
+		// product 생성
+		Product product = productRequest.toEntity(productRequest);
+		product.changeStore(findStore);
+		product.changeSubCategory(findSubCategory);
+		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
+		
+		log.info("product : {}", createdProduct);
+
 		ProductSearchCondition condition = ProductSearchCondition.builder()
 				.priceGoe(500)
 				.priceLoe(2000)
@@ -297,23 +324,25 @@ public class ProductServiceTest {
 		optionGroupRequest.getOptionRequests().add(optionRequest);
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
+		// product 생성
 		Product product = productRequest.toEntity(productRequest);
-		
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
-		
-		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				})
-				.collect(Collectors.toList());
-		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
-		
 		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
 		
 		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
 		
@@ -410,25 +439,28 @@ public class ProductServiceTest {
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
 		// when
+		// product 생성
 		Product product = productRequest.toEntity(productRequest);
-		
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
-		
-		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				})
-				.collect(Collectors.toList());
-		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
-		
 		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
+		// 위에 까지 상품 등록
+		
 		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
-		// 위에 까지 상품 등록(옵션그룹, 옵션 포함) 로직
 		
 		OptionRequest addOptionRequest = OptionRequest.builder()
 				.name("옵션 이름을 변경해주세요.")
@@ -439,10 +471,16 @@ public class ProductServiceTest {
 				.build();
 		
 		OptionGroup addOptionGroup = OptionGroupRequest.toEntity(addOptionGroupRequest);
-		Option addOption = OptionRequest.toEntity(addOptionRequest);
-		addOptionGroup.addOption(addOption);
+		addOptionGroup.changeProduct(findProduct);
 		
-		findProduct.addOptionGroup(addOptionGroup); // 옵션 그룹 추가
+		Option addOption = OptionRequest.toEntity(addOptionRequest);
+		
+		// 옵션 그룹 추가
+		addOptionGroup = optionGroupRepository.save(addOptionGroup);
+		
+		 // 옵션 추가
+		addOption.changeOptionGroup(addOptionGroup);
+		optionRepository.save(addOption);
 	}
 	
 	@Test
@@ -506,23 +544,25 @@ public class ProductServiceTest {
 		optionGroupRequest.getOptionRequests().add(optionRequest);
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
+		// product 생성
 		Product product = productRequest.toEntity(productRequest);
-		
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
-		
-		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				})
-				.collect(Collectors.toList());
-		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
-		
 		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
 		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
 		// 위에 까지 상품 등록(옵션그룹, 옵션 포함) 로직
 		
@@ -532,8 +572,8 @@ public class ProductServiceTest {
 		Option addOption = Option.builder()
 				.name("추가 옵션")
 				.build();// 추가할 옵션
-		
-		orgOptionGroup.addOption(addOption); // 옵션 추가
+		addOption.changeOptionGroup(orgOptionGroup);
+		optionRepository.save(addOption);
 	}
 	
 	// TODO : 옵션그룹 개별 삭제 - 하위 옵션까지 삭제 
@@ -598,25 +638,26 @@ public class ProductServiceTest {
 		optionGroupRequest.getOptionRequests().add(optionRequest);
 		productRequest.getOptionGroupRequests().add(optionGroupRequest);
 		
-		Product product = productRequest.toEntity(productRequest);
 		
+		// product 생성
+		Product product = productRequest.toEntity(productRequest);
 		product.changeStore(findStore);
 		product.changeSubCategory(findSubCategory);
-		
-		List<OptionGroup> optionGroups = productRequest.getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				})
-				.collect(Collectors.toList());
-		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
-		
 		Product createdProduct = productRepository.save(product);
-		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
-		// 위에 까지 상품 등록(옵션그룹, 옵션 포함) 로직
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt);
+			});
+		});
 		
 		OptionRequest addOptionRequest = OptionRequest.builder()
 				.name("옵션 이름을 변경해주세요.")
@@ -627,29 +668,23 @@ public class ProductServiceTest {
 				.build();
 		
 		OptionGroup addOptionGroup = OptionGroupRequest.toEntity(addOptionGroupRequest);
-		Option addOption = OptionRequest.toEntity(addOptionRequest);
-		addOptionGroup.addOption(addOption);
+		addOptionGroup.changeProduct(createdProduct);
+		optionGroupRepository.save(addOptionGroup);
 		
-		findProduct.addOptionGroup(addOptionGroup); // 옵션 그룹 추가
+		Option addOption = OptionRequest.toEntity(addOptionRequest);
+		addOption.changeOptionGroup(addOptionGroup);
+		optionRepository.save(addOption);
 		
 		// when
-		em.flush();
-		em.clear();
-		
-		log.info("findProduct : {}", findProduct);
-		
-		findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
+		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
 		// TODO: issue: https://velog.io/@kimsunfang/%EC%A0%91%EA%B7%BC%EC%A0%9C%ED%95%9C%EC%9E%90%EC%99%80-JPA
 		// jpa 는 private한 기본생성자를 가진 엔티티에 대해서는 프록시 객체를 만들지 못한다
 		
 		// 삭제
-		if(findProduct.getOptionGroups().size() > 0) {
+		if(findProduct.getOptionGroups().size() > 0) { // 1개 이상일 때만 삭제 가능
 			findProduct.getOptionGroups().get(0).getOptions().forEach(o -> optionRepository.delete(o));
 			optionGroupRepository.delete(findProduct.getOptionGroups().get(0));
 		}
-		// TODO: product에서 optionGroup을 먼저 삭제 해줘야 한다
-		
-		// 1개 이상일 때만 삭제 가능
 	}
 	
 	// TODO : 옵션 개별 삭제

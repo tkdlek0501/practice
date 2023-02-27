@@ -32,7 +32,7 @@ public class OptionGroup extends AuditEntity{
 	@JoinColumn(name = "product_id")
 	private Product product;
 	
-	@OneToMany(mappedBy = "optionGroup", cascade = CascadeType.PERSIST)
+	@OneToMany(mappedBy = "optionGroup")
 	private List<Option> options = new ArrayList<>();
 	
 	public void changeProduct(Product product){

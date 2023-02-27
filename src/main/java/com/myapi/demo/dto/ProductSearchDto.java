@@ -17,8 +17,6 @@ public class ProductSearchDto {
 	
 	private String code;
 	
-	private int quantity;
-	
 	private boolean isSoldOut;
 	
 	private PriceControlType priceControlType;
@@ -29,7 +27,6 @@ public class ProductSearchDto {
 			String storeName,
 			String productName,
 			String code,
-			int quantity,
 			boolean isSoldOut,
 			PriceControlType priceControlType
 			) {
@@ -37,7 +34,6 @@ public class ProductSearchDto {
 		this.storeName = storeName;
 		this.productName = productName;
 		this.code = code;
-		this.quantity = quantity;
 		this.isSoldOut = isSoldOut;
 		this.priceControlType = priceControlType;
 	}
