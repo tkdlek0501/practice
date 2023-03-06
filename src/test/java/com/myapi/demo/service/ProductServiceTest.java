@@ -680,14 +680,139 @@ public class ProductServiceTest {
 		// TODO: issue: https://velog.io/@kimsunfang/%EC%A0%91%EA%B7%BC%EC%A0%9C%ED%95%9C%EC%9E%90%EC%99%80-JPA
 		// jpa 는 private한 기본생성자를 가진 엔티티에 대해서는 프록시 객체를 만들지 못한다
 		
-		// 삭제
-		if(findProduct.getOptionGroups().size() > 0) { // 1개 이상일 때만 삭제 가능
+		// 옵션그룹 삭제 : 옵션 그룹 내 옵션 부터 모두 삭제
+		if(findProduct.getOptionGroups().size() > 1) { // 1개 이상일 때만 삭제 가능
 			findProduct.getOptionGroups().get(0).getOptions().forEach(o -> optionRepository.delete(o));
 			optionGroupRepository.delete(findProduct.getOptionGroups().get(0));
 		}
 	}
 	
-	// TODO : 옵션 개별 삭제
+	@Test
+	@Rollback(false)
+	public void 옵션_개별_삭제() {
+		// given
+	
+		// user
+		User user = User.builder()
+				.username("이름1")
+				.password(passwordEncoder.encode("abcde"))
+				.nickname("닉네임1")
+				.type(UserType.MAINMALL)
+				.build();
+		User createdUser = userRepository.save(user);
+		User findUser = userRepository.findById(createdUser.getId()).orElse(null);
+		
+		// store
+		Store store = Store.builder()
+		.name("매장1")
+		.businessNo("12345")
+		.description("첫번째 매장입니다.")
+		.build();
+		store.changeUser(findUser);
+		Store createdStore = storeRepository.save(store);
+		Store findStore = storeRepository.findById(createdStore.getId()).orElse(null);
+		
+		// category
+		MainCategory mainCategory = MainCategory.builder()
+				.name("메인카테고리1")
+				.build();
+		mainCategory.changeStore(findStore);
+		MainCategory createdMainCategory = mainCategoryRepository.save(mainCategory);
+		MainCategory findMainCategory = mainCategoryRepository.findById(createdMainCategory.getId()).orElse(null);
+		
+		SubCategory subCategory = SubCategory.builder()
+				.name("서브카테고리1")
+				.build();
+		subCategory.changeMainCategory(findMainCategory);
+		SubCategory createdSubCategory = subCategoryRepository.save(subCategory);
+		SubCategory findSubCategory = subCategoryRepository.findById(createdSubCategory.getId()).orElse(null);
+		
+		// product
+		ProductRequest productRequest = ProductRequest.builder()
+				.name("상품1")
+				.price(1000)
+				.code("M0001")
+				.quantity(100)
+				.isSoldOut(false)
+				.priceControlType(PriceControlType.MAINMALL)
+				.build();
+		
+		OptionRequest optionRequest = OptionRequest.builder()
+				.name("옵션1")
+				.build();
+		
+		OptionGroupRequest optionGroupRequest = OptionGroupRequest.builder()
+				.name("옵션그룹1")
+				.build();
+		
+		optionGroupRequest.getOptionRequests().add(optionRequest);
+		productRequest.getOptionGroupRequests().add(optionGroupRequest);
+		
+		
+		// product 생성
+		Product product = productRequest.toEntity(productRequest);
+		product.changeStore(findStore);
+		product.changeSubCategory(findSubCategory);
+		Product createdProduct = productRepository.save(product);
+		
+		productRequest.getOptionGroupRequests().forEach(ogr -> {
+			// optionGroup 생성
+			OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+			optionGroup.changeProduct(createdProduct);
+			OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
+			
+			List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+			// option 생성
+			options.forEach(opt -> {
+				opt.changeOptionGroup(createdOptionGroup);
+				optionRepository.save(opt); // TODO: saveAll 로 바꾸기
+			});
+		});
+		
+		OptionRequest addOptionRequest = OptionRequest.builder()
+				.name("옵션 이름을 변경해주세요.")
+				.build();
+		
+		OptionGroupRequest addOptionGroupRequest = OptionGroupRequest.builder()
+				.name("옵션 그룹 이름을 변경해주세요.")
+				.build();
+		
+		OptionGroup addOptionGroup = OptionGroupRequest.toEntity(addOptionGroupRequest);
+		addOptionGroup.changeProduct(createdProduct);
+		optionGroupRepository.save(addOptionGroup);
+		
+		Option addOption = OptionRequest.toEntity(addOptionRequest);
+		addOption.changeOptionGroup(addOptionGroup);
+		List<Option> options = new ArrayList<>();
+		options.add(addOption);
+		
+		// 두번째 옵션그룹에 옵션 하나 더 추가
+		OptionRequest addOptionRequest2 = OptionRequest.builder()
+				.name("옵션 이름을 변경해주세요2.")
+				.build();
+		Option addOption2 = OptionRequest.toEntity(addOptionRequest2);
+		addOption2.changeOptionGroup(addOptionGroup);
+		options.add(addOption2);
+		
+//		options.add(addOption); 
+
+		optionRepository.saveAll(options);
+		
+		// when
+		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
+		
+		// 옵션 삭제 (두번째 옵션그룹)
+		findProduct.getOptionGroups().get(1).getOptions().forEach(o -> {
+			log.info("option size : {}", findProduct.getOptionGroups().get(0).getOptions().size());
+			if(findProduct.getOptionGroups().get(1).getOptions().size() > 1) {
+				optionRepository.delete(o);
+			}
+		});
+		// TODO: 조건에 걸리지 않고 옵션그룹내 옵션 2개 모두 delete가 날아가는 문제 수정해야 한다
+		
+		
+		log.info("res option size : {}", findProduct.getOptionGroups().get(0).getOptions().size());
+	}
 	
 	// TODO : 옵션그룹 개별 수정
 	
