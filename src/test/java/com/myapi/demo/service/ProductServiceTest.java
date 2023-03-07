@@ -802,16 +802,35 @@ public class ProductServiceTest {
 		Product findProduct = productRepository.findById(createdProduct.getId()).orElse(null);
 		
 		// 옵션 삭제 (두번째 옵션그룹)
-		findProduct.getOptionGroups().get(1).getOptions().forEach(o -> {
-			log.info("option size : {}", findProduct.getOptionGroups().get(0).getOptions().size());
-			if(findProduct.getOptionGroups().get(1).getOptions().size() > 1) {
-				optionRepository.delete(o);
-			}
-		});
-		// TODO: 조건에 걸리지 않고 옵션그룹내 옵션 2개 모두 delete가 날아가는 문제 수정해야 한다
+		List<Long> ids = new ArrayList<>(); // 받아온 id list (test용)
+		for(Option o : findProduct.getOptionGroups().get(1).getOptions()) {
+			ids.add(o.getId());
+		}
 		
+		// 실제로는 하나씩 delete 하는 api 이기 때문에
+		// 처음 delete 요청시
+		if(findProduct.getOptionGroups().get(1).getOptions().size() > 1) {
+			log.info("삭제 진행");
+			optionRepository.delete(optionRepository.findById(ids.get(0)).orElse(null));
+			em.flush();
+			em.clear();
+			findProduct = productRepository.findById(createdProduct.getId()).orElse(null); // 다시 조회
+		}
 		
-		log.info("res option size : {}", findProduct.getOptionGroups().get(0).getOptions().size());
+		// 다음 delete 요청시
+		if(findProduct.getOptionGroups().get(1).getOptions().size() > 1) {
+			log.info("삭제 진행");
+			optionRepository.delete(optionRepository.findById(ids.get(1)).orElse(null));
+			em.flush();
+			em.clear();
+			findProduct = productRepository.findById(createdProduct.getId()).orElse(null); // 다시 조회
+		}
+		
+		// *delete 후에는 다시 조회해와야 한다 (조회된 시점에 스냅샷에 고정돼있기 때문에 갱신해줘야 한다)
+		// 즉 select 이후 update나 delete이후에는 em.flush, em.clear를 하고 다시 조회해서 갱신해줘야 한다
+		// 실제 service 로직 에서는 option으로 부터 optionGroup을 조회해서 size 체크를 하고 진행하는 로직으로 만들기
+		
+		log.info("res option size : {}", findProduct.getOptionGroups().get(0).getOptions().size()); // 1로 남아있어야 한다
 	}
 	
 	// TODO : 옵션그룹 개별 수정
