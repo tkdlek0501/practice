@@ -9,6 +9,6 @@ import com.myapi.demo.repository.custom.ProductRepositoryCustom;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom{
 	
-	//Optional<Product> findByIdAndExpiredAtIsNull(Long id);
+//	Optional<Product> findByIdAndExpiredAtIsNull(Long id);
 	
 }

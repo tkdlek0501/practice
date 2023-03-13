@@ -1,5 +1,6 @@
 package com.myapi.demo.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+
+import com.myapi.demo.request.OptionGroupUpdateRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +29,8 @@ import lombok.ToString;
 public class OptionGroup extends AuditEntity{
 	
 	private String name;
+	
+	private LocalDateTime expiredAt;
 	
 	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -45,5 +50,11 @@ public class OptionGroup extends AuditEntity{
 		option.setOptionGroup(this);
 	}
 	
+	public void expire() {
+		this.expiredAt = LocalDateTime.now();
+	}
 	
+	public void update(OptionGroupUpdateRequest request) {
+		this.name = request.getName();
+	}
 }
