@@ -53,7 +53,4 @@ public class Option extends AuditEntity{
 		this.expiredAt = LocalDateTime.now();
 	}
 	
-	public void update(OptionUpdateRequest request) {
-		this.name = request.getName();
-	}
 }

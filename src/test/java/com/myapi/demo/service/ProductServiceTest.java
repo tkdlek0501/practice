@@ -1295,10 +1295,14 @@ public class ProductServiceTest {
 		em.flush();
 		em.clear();
 		Option findOption = optionRepository.findById(resOption.getId()).orElse(null);
-		OptionUpdateRequest request = new OptionUpdateRequest("변경한 옵션명1");
-		// TODO: update시 기존 엔티티는 expire 시키고 새로 insert 하기; 기존 옵션에 대해 내역 남기기 위해
+		// 1. 기존 옵션 expire
+		findOption.expire();
 		
-		findOption.update(request);
-
+		// 2. update한 정보로 새로 생성
+		OptionUpdateRequest request = new OptionUpdateRequest("변경한 옵션명1");
+		Option updateOption = OptionUpdateRequest.toEntity(request);
+		updateOption.changeOptionGroup(addOptionGroup);
+		optionRepository.save(updateOption);
+		
 	}
 }
