@@ -1,12 +1,18 @@
 package com.myapi.demo.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.myapi.demo.domain.OptionGroup;
+import com.myapi.demo.request.OptionGroupRequest;
+import com.myapi.demo.request.OptionGroupUpdateRequest;
 import com.myapi.demo.request.OptionRequest;
+import com.myapi.demo.request.OptionUpdateRequest;
 import com.myapi.demo.service.OptionService;
 import com.myapi.demo.service.ProductService;
 
@@ -39,10 +45,48 @@ public class OptionController {
 	}
 	
 	// 옵션 개별 추가
-	@PostMapping("/option/{optionGroupId}")
+	@PostMapping("/{optionGroupId}")
 	public ResponseEntity<Void> addOption(@PathVariable("optionGroupId") Long optrionGroupId, @RequestBody OptionRequest request){
 		
 		optionService.addOption(optrionGroupId, request);
+		
+		return ResponseEntity.ok(null);
+	}
+	
+	// 옵션 그룹 개별 삭제
+	@DeleteMapping("/group/{optionGroupId}")
+	public ResponseEntity<Void> deleteOptionGroup(@PathVariable("optionGroupId") Long optionGroupId){
+		// product 조회
+		
+		optionService.deleteOptionGroup(optionGroupId);
+		
+		return ResponseEntity.ok(null);
+	}
+	
+	// 옵션 개별 삭제
+	@DeleteMapping("/{optionId}")
+	public ResponseEntity<Void> deleteOption(@PathVariable("optionId") Long optionId){
+		
+		optionService.deleteOption(optionId);
+		
+		return ResponseEntity.ok(null);
+	}
+	
+	// 옵션 그룹 개별 수정
+	@PutMapping("/group/{optionGroupId}")
+	public ResponseEntity<Void> updateOptionGroup(@PathVariable("optionGroupid") Long optionGroupId,
+			@RequestBody OptionGroupUpdateRequest request){
+		
+		optionService.updateOptionGroup(optionGroupId, request);
+		
+		return ResponseEntity.ok(null);
+	}
+	
+	// 옵션 개별 수정
+	@PutMapping("/{optionId}")
+	public ResponseEntity<Void> updateOption(@PathVariable("optionId") Long optionId, @RequestBody OptionUpdateRequest request){
+		
+		optionService.updateOption(optionId, request);
 		
 		return ResponseEntity.ok(null);
 	}
