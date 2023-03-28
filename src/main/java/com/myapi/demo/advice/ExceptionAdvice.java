@@ -7,13 +7,18 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myapi.demo.exception.BindingException;
+import com.myapi.demo.exception.NotFoundOptionException;
+import com.myapi.demo.exception.NotFoundOptionGroupException;
 import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
+import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedDeleteOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedDeleteOptionGroupConditionException;
 
 @ControllerAdvice(annotations = RestController.class)
 public class ExceptionAdvice {
 	
-	private ErrorResponse extracted(Exception e, ErrorCode errorCode) {
+	private ErrorResponse makeErrorResponse(Exception e, ErrorCode errorCode) {
 		ErrorResponse errorResponse = ErrorResponse.builder()
 		.code(errorCode.getCode())
 		.message(e.getMessage() != null ? e.getMessage() : errorCode.getMessage())
@@ -23,22 +28,58 @@ public class ExceptionAdvice {
 	
 	@ExceptionHandler(BindingException.class)
 	public ResponseEntity<ErrorResponse> handleBindingException(BindingException e){
-		ErrorResponse errorResponse = extracted(e, ErrorCode.BINDING_EXCEPTION);
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.BINDING_EXCEPTION);
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotFoundSubCategoryException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundSubCategoryException(NotFoundSubCategoryException e){
-		ErrorResponse errorResponse = extracted(e, ErrorCode.NOT_FOUND_SUB_CATEGORY_EXCEPTION);
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_SUB_CATEGORY_EXCEPTION);
 				
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotFoundStoreException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundStoreException(NotFoundStoreException e){
-		ErrorResponse errorResponse = extracted(e, ErrorCode.NOT_FOUND_STORE_EXCEPTION);
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_STORE_EXCEPTION);
 				
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
+	
+	@ExceptionHandler(NotSatisfiedCreateOptionConditionException.class)
+	public ResponseEntity<ErrorResponse> handleNotSatisfiedCreateOptionConditionException(NotSatisfiedCreateOptionConditionException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_SATISFIED_CREATE_OPTION_CONDITION_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotFoundOptionGroupException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundOptionGroupException(NotFoundOptionGroupException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_OPTION_GROUP_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotSatisfiedDeleteOptionGroupConditionException.class)
+	public ResponseEntity<ErrorResponse> handleNotSatisfiedDeleteOptionConditionException(NotSatisfiedDeleteOptionGroupConditionException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_SATISFIED_DELETE_OPTION_GROUP_CONDITION_EXCEPTION);
+	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotSatisfiedDeleteOptionConditionException.class)
+	public ResponseEntity<ErrorResponse> handleNotSatisfiedDeleteOptionConditionException(NotSatisfiedDeleteOptionConditionException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_SATISFIED_DELETE_OPTION_CONDITION_EXCEPTION);
+	
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotFoundOptionException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundOptionException(NotFoundOptionException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_OPTION_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
 }

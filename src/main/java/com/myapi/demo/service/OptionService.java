@@ -9,7 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.myapi.demo.domain.Option;
 import com.myapi.demo.domain.OptionGroup;
 import com.myapi.demo.domain.Product;
+import com.myapi.demo.exception.NotFoundOptionException;
+import com.myapi.demo.exception.NotFoundOptionGroupException;
 import com.myapi.demo.exception.NotFoundProductException;
+import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedDeleteOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedDeleteOptionGroupConditionException;
 import com.myapi.demo.repository.OptionGroupRepository;
 import com.myapi.demo.repository.OptionRepository;
 import com.myapi.demo.repository.ProductRepository;
@@ -44,8 +49,7 @@ public class OptionService {
 		OptionGroup createdOptionGroup = optionGroupRepository.save(optionGroup);
 		
 		// option 생성
-		if(request.getOptionRequests().size() < 1) throw new NotFoundProductException("");
-			// TODO: throw new NotSatisfiedCreateOptionConditionException();
+		if(request.getOptionRequests().size() < 1) throw new NotSatisfiedCreateOptionConditionException(null); 
 		List<Option> options = request.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
 		options.forEach(opt -> {
 			opt.changeOptionGroup(createdOptionGroup);
@@ -57,8 +61,7 @@ public class OptionService {
 	@Transactional
 	public void addOption(Long optionGroupId, OptionRequest request) {
 		
-		OptionGroup optionGroup = optionGroupRepository.findById(optionGroupId).get();
-				// TODO: .orElseThrow(exceptionSupplier);
+		OptionGroup optionGroup = optionGroupRepository.findById(optionGroupId).orElseThrow(() -> new NotFoundOptionGroupException(null));
 		
 		// 옵션 1개 추가
 		Option option = OptionRequest.toEntity(request);
@@ -68,15 +71,11 @@ public class OptionService {
 	
 	@Transactional
 	public void deleteOptionGroup(Long optionGroupId) {
-		OptionGroup optionGroup = optionGroupRepository.findByIdAndExpiredAtIsNull(optionGroupId).get();
-		// TODO: .orElseThrow(exceptionSupplier);
+		OptionGroup optionGroup = optionGroupRepository.findByIdAndExpiredAtIsNull(optionGroupId).orElseThrow(() -> new NotFoundOptionGroupException(null));
 		
+		Product product = productRepository.findByIdAndExpiredAtIsNull(optionGroup.getProduct().getId()).orElseThrow(() -> new NotFoundProductException(null));
 		// 1개 이하이면 삭제 불가
-		Product product = productRepository.findByIdAndExpiredAtIsNull(optionGroup.getProduct().getId()).get();
-		// TODO: exception
-		
-//		if(product.getOptionGroups().stream().filter(og -> og.getExpiredAt() == null).collect(Collectors.toList()).size() <= 1) throw new Exception();
-		// TODO: exception
+		if(product.getOptionGroups().stream().filter(og -> og.getExpiredAt() == null).collect(Collectors.toList()).size() <= 1) throw new NotSatisfiedDeleteOptionGroupConditionException(null);
 		
 		optionGroup.getOptions().forEach(o -> o.expire());
 		optionGroup.expire();
@@ -84,13 +83,11 @@ public class OptionService {
 	
 	@Transactional
 	public void deleteOption(Long optionId) {
-		Option option = optionRepository.findByIdAndExpiredAtIsNull(optionId).get();
-		// TODO: .orElseThrow(exceptionSupplier);
+		Option option = optionRepository.findByIdAndExpiredAtIsNull(optionId).orElseThrow(() -> new NotFoundOptionException(null));
 		
 		OptionGroup optionGroup = optionGroupRepository.findByIdAndExpiredAtIsNull(option.getOptionGroup().getId()).get();
 		
-//		if(optionGroup.getOptions().stream().filter(o -> o.getExpiredAt() == null).collect(Collectors.toList()).size() <= 1) throw new Exception();
-		// TODO: exception
+		if(optionGroup.getOptions().stream().filter(o -> o.getExpiredAt() == null).collect(Collectors.toList()).size() <= 1) throw new NotSatisfiedDeleteOptionConditionException(null);
 		
 		option.expire();
 	}
