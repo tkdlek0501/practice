@@ -20,6 +20,7 @@ import com.myapi.demo.exception.NotFoundProductException;
 import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -38,30 +39,26 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductService {
 	
 	private final ProductRepository productRepository;
-	
+
 	private final StoreRepository storeRepository;
-	
+
 	private final SubCategoryRepository subCategoryRepository;
-	
+
 	private final ApplicationEventPublisher eventPublisher;
 	
 	@Transactional
 	public void create(ProductCreateRequest request) {
 		
-		log.info("ProductCreateRequest : {}", request);
+		if(request.getProductRequest().getOptionGroupRequests().size() < 1) {
+			throw new NotSatisfiedCreateOptionGroupConditionException(null); // 상품은 최소 한 개의 옵션 그룹을 가져야 합니다.
+		}
 		
-		// TODO : 예외 처리
-		// 최소 1개의 옵션그룹과 옵션을 가져야 한다
-//		if(request.getProductRequest().getOptionGroupRequests().size() < 1) {
-//			throw new NotSatisfiedCreateOptionGroupConditionException(null); // 상품은 최소 한 개의 옵션 그룹을 가져야 합니다.
-//		}
-//		
 		request.getProductRequest().getOptionGroupRequests().stream()
-			.map(ogr -> {
-				(ogr.getOptionRequests().size() < 1){ 
-					throw new NotSatisfiedCreateOptionConditionException(null); // 옵션 그룹 내에는 최소 1개의 옵션이 있어야 합니다.
-				}
-			});	
+		.map(ogr -> {
+			(ogr.getOptionRequests().size() < 1) { 
+				throw new NotSatisfiedCreateOptionConditionException(null); // 옵션 그룹 내에는 최소 1개의 옵션이 있어야 합니다.
+			}
+		});	
 		
 		SubCategory subCategory = subCategoryRepository.findById(request.getProductRequest().getSubCategoryId())
 				.orElseThrow(() -> new NotFoundSubCategoryException(null));
@@ -87,12 +84,13 @@ public class ProductService {
 		productRepository.save(product);
 	}
 	
+	
 	public List<ProductSearchDto> search(ProductSearchCondition request){
 		
 		return productRepository.search(request);
 		
 	}
-	
+
 	public void update(ProductUpdateRequest request) {
 		
 		Product product = productRepository.findById(request.getId()).orElseThrow(() -> new NotFoundProductException(null));
@@ -103,5 +101,5 @@ public class ProductService {
 		
 		eventPublisher.publishEvent(new UpdatedProductEvent(tempProduct, updateProduct));
 	}
-	
+
 }

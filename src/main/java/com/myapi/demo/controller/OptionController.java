@@ -1,11 +1,15 @@
 package com.myapi.demo.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myapi.demo.domain.OptionGroup;
@@ -13,6 +17,7 @@ import com.myapi.demo.request.OptionGroupRequest;
 import com.myapi.demo.request.OptionGroupUpdateRequest;
 import com.myapi.demo.request.OptionRequest;
 import com.myapi.demo.request.OptionUpdateRequest;
+import com.myapi.demo.response.OptionGroupResponse;
 import com.myapi.demo.service.OptionService;
 import com.myapi.demo.service.ProductService;
 
@@ -35,13 +40,9 @@ public class OptionController {
 	@PostMapping("/group/{productId}")
 	public ResponseEntity<Void> addOptionGroup(@PathVariable("productId") Long productId, @RequestBody OptionGroupRequest request){
 		
-		// 1. product 찾기
-		// 2. product에 optionGroup 넣어주기
-		// 3. option 까지 넣어주기
 		optionService.addOptionGroup(productId, request);
 		
 		return ResponseEntity.ok(null);
-		
 	}
 	
 	// 옵션 개별 추가
@@ -90,4 +91,11 @@ public class OptionController {
 		
 		return ResponseEntity.ok(null);
 	}
+	
+	// 상품의 옵션 조회
+	@GetMapping("")
+	public ResponseEntity<List<OptionGroupResponse>> getOptionGroup(@RequestParam("productId") Long productId){
+		return ResponseEntity.ok(optionService.getOptionGroup(productId));
+	}
+	
 }

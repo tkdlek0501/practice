@@ -29,6 +29,10 @@ public class Option extends AuditEntity{
 	
 	private String name;
 	
+	private int quantity;
+	
+	private boolean isSoldOut;
+	
 	private LocalDateTime expiredAt;
 	
 	@Setter

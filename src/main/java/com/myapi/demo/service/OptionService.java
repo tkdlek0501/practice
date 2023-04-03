@@ -22,6 +22,7 @@ import com.myapi.demo.request.OptionGroupRequest;
 import com.myapi.demo.request.OptionGroupUpdateRequest;
 import com.myapi.demo.request.OptionRequest;
 import com.myapi.demo.request.OptionUpdateRequest;
+import com.myapi.demo.response.OptionGroupResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,4 +111,16 @@ public class OptionService {
 		updateOption.changeOptionGroup(optionGroup);
 		optionRepository.save(updateOption);
 	}
+	
+	public List<OptionGroupResponse> getOptionGroup(Long productId){
+		
+		Product product = productRepository.findByIdAndExpiredAtIsNull(productId).orElseThrow(() -> new NotFoundProductException(""));
+		
+		List<OptionGroup> optionGroup = optionGroupRepository.findAllByProductAndExpiredAtIsNull(product);
+		
+		return optionGroup.stream().map(OptionGroupResponse::of).collect(Collectors.toList());
+	}
 }
+
+
+

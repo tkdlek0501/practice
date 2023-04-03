@@ -12,6 +12,7 @@ import com.myapi.demo.exception.NotFoundOptionGroupException;
 import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
+import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.exception.NotSatisfiedDeleteOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedDeleteOptionGroupConditionException;
 
@@ -78,6 +79,13 @@ public class ExceptionAdvice {
 	@ExceptionHandler(NotFoundOptionException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundOptionException(NotFoundOptionException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_OPTION_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotSatisfiedCreateOptionGroupConditionException.class)
+	public ResponseEntity<ErrorResponse> handleNotSatisfiedCreateOptionGroupConditionException(NotSatisfiedCreateOptionGroupConditionException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_SATISFIED_CREATE_OPTION_GROUP_CONDITION_EXCEPTION);
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}

@@ -21,7 +21,9 @@ public enum ErrorCode {
 	
 	NOT_SATISFIED_DELETE_OPTION_GROUP_CONDITION_EXCEPTION("B0002", "옵션 그룹은 상품에 최소 1개가 포함되어야 합니다."),
 	
-	NOT_SATISFIED_DELETE_OPTION_CONDITION_EXCEPTION("B0003", "옵션은 옵션 그룹에 최소 1개가 포함되어야 합니다.");
+	NOT_SATISFIED_DELETE_OPTION_CONDITION_EXCEPTION("B0003", "옵션은 옵션 그룹에 최소 1개가 포함되어야 합니다."),
+	
+	NOT_SATISFIED_CREATE_OPTION_GROUP_CONDITION_EXCEPTION("B0004", "옵션은 상품에 최소 1개가 포함되어야 합니다.");
 	
 	private final String code;
 	

@@ -30,6 +30,8 @@ public class OptionGroup extends AuditEntity{
 	
 	private String name;
 	
+	private boolean isRequired;
+	
 	private LocalDateTime expiredAt;
 	
 	@Setter
@@ -56,5 +58,6 @@ public class OptionGroup extends AuditEntity{
 	
 	public void update(OptionGroupUpdateRequest request) {
 		this.name = request.getName();
+		this.isRequired = request.getIsRequired();
 	}
 }
