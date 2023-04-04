@@ -11,6 +11,7 @@ import com.myapi.demo.exception.NotFoundOptionException;
 import com.myapi.demo.exception.NotFoundOptionGroupException;
 import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
+import com.myapi.demo.exception.NotFoundUserException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.exception.NotSatisfiedDeleteOptionConditionException;
@@ -38,14 +39,14 @@ public class ExceptionAdvice {
 	public ResponseEntity<ErrorResponse> handleNotFoundSubCategoryException(NotFoundSubCategoryException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_SUB_CATEGORY_EXCEPTION);
 				
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotFoundStoreException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundStoreException(NotFoundStoreException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_STORE_EXCEPTION);
 				
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotSatisfiedCreateOptionConditionException.class)
@@ -59,7 +60,7 @@ public class ExceptionAdvice {
 	public ResponseEntity<ErrorResponse> handleNotFoundOptionGroupException(NotFoundOptionGroupException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_OPTION_GROUP_EXCEPTION);
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotSatisfiedDeleteOptionGroupConditionException.class)
@@ -80,7 +81,7 @@ public class ExceptionAdvice {
 	public ResponseEntity<ErrorResponse> handleNotFoundOptionException(NotFoundOptionException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_OPTION_EXCEPTION);
 		
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}
 	
 	@ExceptionHandler(NotSatisfiedCreateOptionGroupConditionException.class)
@@ -90,4 +91,11 @@ public class ExceptionAdvice {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 	
+	//NotFoundUserException
+	@ExceptionHandler(NotFoundUserException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundUserException(NotFoundUserException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_USER_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+	}
 }

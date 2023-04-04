@@ -17,6 +17,8 @@ public enum ErrorCode {
 	
 	NOT_FOUND_OPTION_EXCEPTION("A0004", "옵션 조회에 실패했습니다."),
 	
+	NOT_FOUND_USER_EXCEPTION("A0005", "회원 조회에 실패했습니다."),
+	
 	NOT_SATISFIED_CREATE_OPTION_CONDITION_EXCEPTION("B0001", "옵션 그룹 생성시 1개 이상의 옵션이 포함되어야 합니다."),
 	
 	NOT_SATISFIED_DELETE_OPTION_GROUP_CONDITION_EXCEPTION("B0002", "옵션 그룹은 상품에 최소 1개가 포함되어야 합니다."),

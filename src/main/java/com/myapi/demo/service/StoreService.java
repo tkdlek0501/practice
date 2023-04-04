@@ -4,7 +4,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.myapi.demo.domain.Store;
+import com.myapi.demo.domain.User;
+import com.myapi.demo.exception.NotFoundUserException;
 import com.myapi.demo.repository.StoreRepository;
+import com.myapi.demo.repository.UserRepository;
 import com.myapi.demo.request.StoreRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -18,9 +21,13 @@ public class StoreService {
 	
 	private final StoreRepository storeRepository;
 	
+	private final UserRepository userRepository;
+	
 	public void create(StoreRequest storeRequest) {
 		
-		Store store = storeRequest.toEntity(storeRequest);
+		User user = userRepository.findById(storeRequest.getUserId()).orElseThrow(() -> new NotFoundUserException(""));
+		
+		Store store = storeRequest.toEntity(storeRequest, user);
 		storeRepository.save(store);
 	}
 	

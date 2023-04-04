@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.myapi.demo.domain.Option;
 import com.myapi.demo.domain.OptionGroup;
+import com.myapi.demo.domain.PriceControlType;
 import com.myapi.demo.domain.Product;
 import com.myapi.demo.domain.Store;
+import com.myapi.demo.domain.User;
 import com.myapi.demo.domain.SubCategory;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
@@ -28,6 +30,7 @@ import com.myapi.demo.request.OptionGroupRequest;
 import com.myapi.demo.request.OptionRequest;
 import com.myapi.demo.request.ProductCreateRequest;
 import com.myapi.demo.request.ProductUpdateRequest;
+import com.myapi.demo.response.MainMallProductResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -100,6 +103,22 @@ public class ProductService {
 		product.update(updateProduct);
 		
 		eventPublisher.publishEvent(new UpdatedProductEvent(tempProduct, updateProduct));
+	}
+	
+	public List<MainMallProductResponse> findMainMallProduct(User user) {
+		
+		Store store = storeRepository.findByUser(user);
+		
+		Store mainStore = storeRepository.findById(store.getMainStore().getId()).orElseThrow(() -> new NotFoundStoreException(null));
+		
+		// 메인몰 상품
+		List<Product> mainProducts = productRepository.findByStoreAndPriceControlTypeAndExpiredAtIsNull(mainStore, PriceControlType.MAINMALL);
+	
+		// 자기 상품
+		List<Product> subProducts = productRepository.findByStoreAndExpiredAtIsNull(store);
+		List<String> subProductCodes = subProducts.stream().map(s -> s.getCode()).collect(Collectors.toList());
+		
+		return mainProducts.stream().filter(m -> !subProductCodes.contains(m.getCode())).map(MainMallProductResponse::of).collect(Collectors.toList());
 	}
 
 }
