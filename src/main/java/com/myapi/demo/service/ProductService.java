@@ -69,7 +69,15 @@ public class ProductService {
 		Store store = storeRepository.findById(request.getProductRequest().getStoreId())
 				.orElseThrow(() -> new NotFoundStoreException(null));
 		
-		Product product = request.getProductRequest().toEntity(request.getProductRequest());
+		// 상품을 생성하는 주체
+		String owner = "";
+		if(store.getMainStore() == null) {
+			owner = "M";
+		}else {
+			owner = "S";
+		}
+		
+		Product product = request.getProductRequest().toEntity(request.getProductRequest(), owner);
 		
 		product.changeStore(store);
 		product.changeSubCategory(subCategory);
