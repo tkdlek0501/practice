@@ -1,5 +1,6 @@
 package com.myapi.demo.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsUtils;
+
+import com.myapi.demo.service.security.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,8 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig{
 	
 	private final CustomAuthenticationProvider provider;
+	
 	private final CustomAuthenticationSuccessHandler successHandler;
+	
 	private final CustomAuthenticationFailureHandler failureHandler;
+	
+	private final UserService userService;
+	
 	
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,5 +77,15 @@ public class SecurityConfig{
 		)
 		.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 		//web.ignoring().antMatchers("/static/**", "/assets/**");
+	}
+	
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
 }

@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class CustomAuthenticationProvider implements AuthenticationProvider{
 	
 	private final PasswordEncoder passwordEncoder;
+	
 	private final UserService userService;
 	
 	// 로그인 진행시 실행 

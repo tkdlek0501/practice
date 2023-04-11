@@ -1,6 +1,11 @@
 package com.myapi.demo.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.myapi.demo.domain.User;
+import com.myapi.demo.domain.UserType;
 import com.myapi.demo.exception.BindingException;
 import com.myapi.demo.repository.UserRepository;
 import com.myapi.demo.request.CreateUserRequest;
@@ -54,4 +60,25 @@ public class AcountController {
 		
 		return ResponseEntity.ok(null);
 	}
+	
+	// login
+//	@PostMapping("/login")
+//    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
+//        log.info("login : {}", request);
+//        Authentication authentication = authenticationManager.authenticate(
+//            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+//
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//
+//        String jwt = jwtTokenProvider.generateToken(authentication);
+//        log.info("jwt : {}", jwt);
+//
+////        if (((UserPrincipal) authentication.getPrincipal()).getType()
+////            .equals(UserType.)) {
+////            throw new AccessDeniedException("로그인 할 수 없는 유저입니다.");
+////        }
+//
+//        return ResponseEntity.ok(jwt);
+//    }
+	
 }
