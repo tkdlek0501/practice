@@ -20,6 +20,8 @@ import com.myapi.demo.domain.UserType;
 import com.myapi.demo.exception.BindingException;
 import com.myapi.demo.repository.UserRepository;
 import com.myapi.demo.request.CreateUserRequest;
+import com.myapi.demo.request.LoginRequest;
+import com.myapi.demo.security.JwtTokenProvider;
 import com.myapi.demo.service.security.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AcountController {
 	
 	private final UserService userService;
+	
+	private final JwtTokenProvider jwtTokenProvider;
 	
 	@GetMapping("")
 	public ResponseEntity<Void> test(){
@@ -70,8 +74,7 @@ public class AcountController {
 //
 //        SecurityContextHolder.getContext().setAuthentication(authentication);
 //
-//        String jwt = jwtTokenProvider.generateToken(authentication);
-//        log.info("jwt : {}", jwt);
+//        String jwt = jwtTokenProvider.createToken(authentication);
 //
 ////        if (((UserPrincipal) authentication.getPrincipal()).getType()
 ////            .equals(UserType.)) {
