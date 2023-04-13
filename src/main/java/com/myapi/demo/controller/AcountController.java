@@ -3,6 +3,7 @@ package com.myapi.demo.controller;
 import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +38,8 @@ public class AcountController {
 	
 	private final JwtTokenProvider jwtTokenProvider;
 	
+	private final AuthenticationManager authenticationManager;
+	
 	@GetMapping("")
 	public ResponseEntity<Void> test(){
 		log.info("test 입니다.");
@@ -66,22 +69,26 @@ public class AcountController {
 	}
 	
 	// login
-//	@PostMapping("/login")
-//    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
-//        log.info("login : {}", request);
-//        Authentication authentication = authenticationManager.authenticate(
-//            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-//
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        String jwt = jwtTokenProvider.createToken(authentication);
-//
-////        if (((UserPrincipal) authentication.getPrincipal()).getType()
-////            .equals(UserType.)) {
-////            throw new AccessDeniedException("로그인 할 수 없는 유저입니다.");
-////        }
-//
-//        return ResponseEntity.ok(jwt);
-//    }
+	// TODO: CustomAuthenticationProvider 에서의 authenticate 로직(비밀번호 검증 등) 추가
+	@PostMapping("/doLogin")
+    public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
+        log.info("login : {}", request);
+        
+        // CustomAuthenticationProvider에서는 authentication 만 return 해준다
+        // jwt를 이용할거니까 이를 통해 jwt 토큰을 발급해야 한다
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String jwt = jwtTokenProvider.createToken(authentication);
+
+//        if (((UserPrincipal) authentication.getPrincipal()).getType()
+//            .equals(UserType.)) {
+//            throw new AccessDeniedException("로그인 할 수 없는 유저입니다.");
+//        }
+
+        return ResponseEntity.ok(jwt);
+    }
 	
 }
