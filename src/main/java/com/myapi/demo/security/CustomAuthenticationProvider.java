@@ -24,6 +24,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
 	private final UserService userService;
 	
 	// 로그인 진행시 실행 
+	// jwt 이용시 사용 x
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		

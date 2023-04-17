@@ -2,6 +2,7 @@ package com.myapi.demo.advice;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -91,10 +92,16 @@ public class ExceptionAdvice {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 	
-	//NotFoundUserException
 	@ExceptionHandler(NotFoundUserException.class)
 	public ResponseEntity<ErrorResponse> handleNotFoundUserException(NotFoundUserException e){
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_FOUND_USER_EXCEPTION);
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+	}
+	
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ErrorResponse> handleNotFoundUserException(BadCredentialsException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.BAD_CREDENTIAL_EXCEPTION);
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
 	}

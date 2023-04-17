@@ -29,13 +29,8 @@ public class UserService implements UserDetailsService{
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		// TODO: orElseThrow로 변경하기
-		User user = userRepository.findOneByUsername(username).orElse(null);
-		
-		if(user == null) {
-			throw new UsernameNotFoundException("입력한 ID와 일치하는 유저가 조회되지 않습니다.");
-		}
+
+		User user = userRepository.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException("입력한 ID와 일치하는 유저가 조회되지 않습니다."));
 		
 		return user;
 	}

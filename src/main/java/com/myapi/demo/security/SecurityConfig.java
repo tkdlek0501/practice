@@ -1,9 +1,16 @@
 package com.myapi.demo.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +39,10 @@ public class SecurityConfig{
 	
 	private final UserService userService;
 	
+	private final PasswordEncoder passwordEncoder;
+	
+	private final AuthenticationProvider authenticationProvider;
+	
 	
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,21 +56,18 @@ public class SecurityConfig{
 				.antMatchers("/v1.0/user/**").hasAnyRole("ADMIN", "USER")
 				.anyRequest().permitAll() 
 			.and()
-			.formLogin() 
-				.loginPage("/login") // login이 필요한 페이지 접근시 이동되는 url
-				.loginProcessingUrl("/doLogin") 
-				.successHandler(successHandler)
-				.failureHandler(failureHandler)
-			.and()
+//			.formLogin() 
+//				.loginPage("/login") // login이 필요한 페이지 접근시 이동되는 url
+//				.loginProcessingUrl("/doLogin") 
+//				.successHandler(successHandler)
+//				.failureHandler(failureHandler)
+//			.and()
 				.logout() // logout 활성화
 				.logoutUrl("/doLogout") // logout을 실행할 url
 				.logoutSuccessUrl("/") // logout 시 이동되는 url
 			.and().build();
 		
 	}
-	
-	// passwordEncoder는 순환참조 이슈 때문에 WebConfig에서 bean 등록
-	
 	
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(provider);
@@ -81,11 +89,28 @@ public class SecurityConfig{
 	
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
 	}
 	
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+//	 passwordEncoder는 순환참조 이슈 때문에 WebConfig에서 bean 등록
+//	TODO: 왜 순환참조 되는지 알아보기
+//	public PasswordEncoder passwordEncoder() {
+//		return new BCryptPasswordEncoder();
+//	}
+	
+	// TODO: bean 등록 필요한데.. 순환참조 문제 있음
+//	  @Bean
+//	  public AuthenticationManager authenticationManagerBean() {
+//	    List<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
+//	    authenticationProviderList.add(authenticationProvider);
+//	    ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
+//	    authenticationManager.setAuthenticationEventPublisher(defaultAuthenticationEventPublisher());
+//	    return authenticationManager;
+//	  }
+//	  
+//	  @Bean
+//	  DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher() {
+//	    return new DefaultAuthenticationEventPublisher();
+//	  }
+	
 }

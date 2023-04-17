@@ -56,12 +56,11 @@ public class ProductService {
 			throw new NotSatisfiedCreateOptionGroupConditionException(null); // 상품은 최소 한 개의 옵션 그룹을 가져야 합니다.
 		}
 		
-		request.getProductRequest().getOptionGroupRequests().stream()
-		.map(ogr -> {
-			(ogr.getOptionRequests().size() < 1) { 
+		request.getProductRequest().getOptionGroupRequests().forEach(ogr -> {
+			if(ogr.getOptionRequests().size() < 1) {
 				throw new NotSatisfiedCreateOptionConditionException(null); // 옵션 그룹 내에는 최소 1개의 옵션이 있어야 합니다.
 			}
-		});	
+		});
 		
 		SubCategory subCategory = subCategoryRepository.findById(request.getProductRequest().getSubCategoryId())
 				.orElseThrow(() -> new NotFoundSubCategoryException(null));
@@ -115,7 +114,7 @@ public class ProductService {
 	
 	public List<MainMallProductResponse> findMainMallProduct(User user) {
 		
-		Store store = storeRepository.findByUser(user);
+		Store store = storeRepository.findByUser(user).orElseThrow(() -> new NotFoundStoreException(null));
 		
 		Store mainStore = storeRepository.findById(store.getMainStore().getId()).orElseThrow(() -> new NotFoundStoreException(null));
 		

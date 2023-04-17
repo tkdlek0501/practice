@@ -14,7 +14,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtTokenProvider {
 	
 //	@Value("spring.jwt.secret")
-    private static final String SECRET_KEY = "hj";
+    private static final String SECRET_KEY = "hjrlaguswnsdlqslekrlsguswnsdlqslekrlaguswnsdlqslek";
 	
     // 30 min
     private final static Long expireTime = 30 * 60 * 1000L;
