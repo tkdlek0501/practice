@@ -1,48 +1,41 @@
 package com.myapi.demo.security;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsUtils;
 
-import com.myapi.demo.service.security.UserService;
+import com.myapi.demo.service.security.UserDetailService;
 
 import lombok.RequiredArgsConstructor;
 
-@Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig{
 	
-	private final CustomAuthenticationProvider provider;
+	private final UserDetailService userDetailService;
 	
-	private final CustomAuthenticationSuccessHandler successHandler;
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 	
-	private final CustomAuthenticationFailureHandler failureHandler;
-	
-	private final UserService userService;
-	
-	private final PasswordEncoder passwordEncoder;
-	
-	private final AuthenticationProvider authenticationProvider;
-	
+	// TODO: securityConfig <-> authenticationManagerBuilder 순환 참조
+	@Autowired
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+	}
 	
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -69,10 +62,6 @@ public class SecurityConfig{
 		
 	}
 	
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.authenticationProvider(provider);
-	}
-	
 	// 시큐리티 설정에 굳이 포함 안해도 되는 매핑 경로 (css 등)
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring()
@@ -87,18 +76,11 @@ public class SecurityConfig{
 		//web.ignoring().antMatchers("/static/**", "/assets/**");
 	}
 	
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
-	}
+	  @Bean
+	  DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher() {
+	    return new DefaultAuthenticationEventPublisher();
+	  }
 	
-//	 passwordEncoder는 순환참조 이슈 때문에 WebConfig에서 bean 등록
-//	TODO: 왜 순환참조 되는지 알아보기
-//	public PasswordEncoder passwordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
-	
-	// TODO: bean 등록 필요한데.. 순환참조 문제 있음
 //	  @Bean
 //	  public AuthenticationManager authenticationManagerBean() {
 //	    List<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
@@ -107,10 +89,12 @@ public class SecurityConfig{
 //	    authenticationManager.setAuthenticationEventPublisher(defaultAuthenticationEventPublisher());
 //	    return authenticationManager;
 //	  }
-//	  
-//	  @Bean
-//	  DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher() {
-//	    return new DefaultAuthenticationEventPublisher();
-//	  }
+	  
+	  @Bean
+	  public AuthenticationManager authenticationManager(
+	      AuthenticationConfiguration authenticationConfiguration
+	  ) throws Exception {
+	    return authenticationConfiguration.getAuthenticationManager();
+	  }
 	
 }

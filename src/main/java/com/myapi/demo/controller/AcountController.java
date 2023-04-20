@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.myapi.demo.domain.User;
-import com.myapi.demo.domain.UserType;
 import com.myapi.demo.exception.BindingException;
-import com.myapi.demo.repository.UserRepository;
 import com.myapi.demo.request.CreateUserRequest;
 import com.myapi.demo.request.LoginRequest;
 import com.myapi.demo.security.JwtTokenProvider;
-import com.myapi.demo.service.security.UserService;
+import com.myapi.demo.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,6 +70,7 @@ public class AcountController {
     public ResponseEntity<String> login(@Valid @RequestBody LoginRequest request) {
         log.info("login : {}", request);
         
+        // 이게 provider의 authenticate를 호출?
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         // authenticate 호출 시 비밀번호 검증 및 userDetailService 의 loadUserByUsername 실행
@@ -87,8 +85,6 @@ public class AcountController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = jwtTokenProvider.createToken(authentication);
-
-
 
         return ResponseEntity.ok(jwt);
     }

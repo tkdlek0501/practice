@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.myapi.demo.domain.User;
-import com.myapi.demo.service.security.UserService;
+import com.myapi.demo.service.security.UserDetailService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,23 +19,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider{
 	
-	private final PasswordEncoder passwordEncoder;
-	
-	private final UserService userService;
-	
 	// 로그인 진행시 실행 
-	// jwt 이용시 사용 x
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		
-		User user = (User) userService.loadUserByUsername(authentication.getName());
-		
-		String password = authentication.getCredentials().toString();
-		
-		// 비밀번호 틀리면
-		if (!passwordEncoder.matches(password, user.getPassword())) {
-			throw new BadCredentialsException("아이디 또는 비밀번호가 틀렸습니다."); // failure로 던져줌
-		}
+		User user = (User) authentication.getPrincipal();
 		
 		// 로그인 성공시 
 		return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

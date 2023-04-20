@@ -1,5 +1,6 @@
 package com.myapi.demo.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class Product extends AuditEntity{
 	
 	@Enumerated(EnumType.STRING)
 	private PriceControlType priceControlType;
+	
+	private LocalDateTime expiredAt;
 	
 	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
