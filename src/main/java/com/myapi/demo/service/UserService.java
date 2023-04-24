@@ -21,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class UserService {
 	
-	// TODO: 순환참조 문제... 뭐지?
-//	private final PasswordEncoder passwordEncoder;
-	
 	private final UserRepository userRepository;
 	
 	@Transactional

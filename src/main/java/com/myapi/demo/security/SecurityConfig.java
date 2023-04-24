@@ -31,8 +31,7 @@ public class SecurityConfig{
 		return new BCryptPasswordEncoder();
 	}
 	
-	// TODO: securityConfig <-> authenticationManagerBuilder 순환 참조
-	@Autowired
+	// @Autowired 붙이면 securityConfig <-> authenticationManagerBuilder 순환 참조
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
 	}

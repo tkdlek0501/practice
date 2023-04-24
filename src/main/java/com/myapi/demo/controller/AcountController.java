@@ -51,6 +51,7 @@ public class AcountController {
 			BindingResult bingdingResult
 			){
 		
+		// TODO: 이런(if문과 for문 조합) 로직 만들지 않기
 		if(bingdingResult.hasErrors()) {
 			String errorFields = "";
 			for(FieldError error : bingdingResult.getFieldErrors()) {
