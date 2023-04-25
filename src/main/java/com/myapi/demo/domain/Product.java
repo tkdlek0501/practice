@@ -39,7 +39,7 @@ public class Product extends AuditEntity{
 	private boolean isSoldOut;
 	
 	@Enumerated(EnumType.STRING)
-	private PriceControlType priceControlType;
+	private PriceControlType priceControlType; // 이름을 price로 했지만, 상품 수정 권한
 	
 	private LocalDateTime expiredAt;
 	

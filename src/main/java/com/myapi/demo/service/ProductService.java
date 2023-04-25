@@ -13,6 +13,7 @@ import com.myapi.demo.domain.PriceControlType;
 import com.myapi.demo.domain.Product;
 import com.myapi.demo.domain.Store;
 import com.myapi.demo.domain.User;
+import com.myapi.demo.domain.UserType;
 import com.myapi.demo.domain.SubCategory;
 import com.myapi.demo.dto.ProductSearchCondition;
 import com.myapi.demo.dto.ProductSearchDto;
@@ -23,6 +24,7 @@ import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
+import com.myapi.demo.exception.NotSatisfiedUserTypeException;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -100,15 +102,22 @@ public class ProductService {
 		return productRepository.search(request);
 		
 	}
-
-	public void update(ProductUpdateRequest request) {
+	
+	@Transactional
+	public void update(ProductUpdateRequest request, User user) {
 		
 		Product product = productRepository.findById(request.getId()).orElseThrow(() -> new NotFoundProductException(null));
+		// 1. 메인몰이 관리하는 상품은 메인몰만 수정 가능
+		if(product.getPriceControlType().equals(PriceControlType.MAINMALL) && !user.getType().equals(UserType.MAINMALL)) {
+			throw new NotSatisfiedUserTypeException(null);
+		}
+		
 		TempProduct tempProduct = TempProduct.toTempProduct(product);
 		
 		Product updateProduct = request.toEntity(request);
 		product.update(updateProduct);
 		
+		// 상품 수정 내역을 관리하기 위한 이벤트
 		eventPublisher.publishEvent(new UpdatedProductEvent(tempProduct, updateProduct));
 	}
 	

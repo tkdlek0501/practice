@@ -17,6 +17,7 @@ import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.exception.NotSatisfiedDeleteOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedDeleteOptionGroupConditionException;
+import com.myapi.demo.exception.NotSatisfiedUserTypeException;
 
 @ControllerAdvice(annotations = RestController.class)
 public class ExceptionAdvice {
@@ -104,5 +105,12 @@ public class ExceptionAdvice {
 		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.BAD_CREDENTIAL_EXCEPTION);
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+	}
+	
+	@ExceptionHandler(NotSatisfiedUserTypeException.class)
+	public ResponseEntity<ErrorResponse> handleNotSatisfiedUserTypeException(NotSatisfiedUserTypeException e){
+		ErrorResponse errorResponse = makeErrorResponse(e, ErrorCode.NOT_SATISFIED_USER_TYPE);
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 }

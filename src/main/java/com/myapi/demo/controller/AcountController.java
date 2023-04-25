@@ -84,6 +84,7 @@ public class AcountController {
 //  }
         
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        // SecurityContextHolder에 loadUserByUsername의 결과(authentication)를 저장
 
         String jwt = jwtTokenProvider.createToken(authentication);
 

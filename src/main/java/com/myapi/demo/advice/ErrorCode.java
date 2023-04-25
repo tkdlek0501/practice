@@ -27,7 +27,9 @@ public enum ErrorCode {
 	
 	NOT_SATISFIED_CREATE_OPTION_GROUP_CONDITION_EXCEPTION("B0004", "옵션은 상품에 최소 1개가 포함되어야 합니다."),
 	
-	BAD_CREDENTIAL_EXCEPTION("0002", "아이디 또는 비밀번호가 틀렸습니다.");
+	BAD_CREDENTIAL_EXCEPTION("0002", "아이디 또는 비밀번호가 틀렸습니다."),
+	
+	NOT_SATISFIED_USER_TYPE("0003", "권한을 만족하지 않습니다.");
 	
 	private final String code;
 	
