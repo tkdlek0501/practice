@@ -1,12 +1,17 @@
 package com.myapi.demo.service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.myapi.demo.domain.MainCategory;
 import com.myapi.demo.domain.Option;
 import com.myapi.demo.domain.OptionGroup;
 import com.myapi.demo.domain.PriceControlType;
@@ -25,6 +30,7 @@ import com.myapi.demo.exception.NotFoundSubCategoryException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.exception.NotSatisfiedUserTypeException;
+import com.myapi.demo.repository.MainCategoryRepository;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -50,6 +56,8 @@ public class ProductService {
 	private final SubCategoryRepository subCategoryRepository;
 
 	private final ApplicationEventPublisher eventPublisher;
+	
+	private final MainCategoryRepository mainCategoryRepository;
 	
 	@Transactional
 	public void create(ProductCreateRequest request) {
@@ -135,6 +143,60 @@ public class ProductService {
 		List<String> subProductCodes = subProducts.stream().map(s -> s.getCode()).collect(Collectors.toList());
 		
 		return mainProducts.stream().filter(m -> !subProductCodes.contains(m.getCode())).map(MainMallProductResponse::of).collect(Collectors.toList());
+	}
+	
+	@Transactional
+	public void updateToMainMallProduct(User user) {
+		
+		Store store = storeRepository.findByUser(user).orElseThrow(() -> new NotFoundStoreException(null));
+		
+		Store mainStore = storeRepository.findById(store.getMainStore().getId()).orElseThrow(() -> new NotFoundStoreException(null));
+		
+		// 메인몰 상품
+		List<Product> mainProducts = productRepository.findByStoreAndPriceControlTypeAndExpiredAtIsNull(mainStore, PriceControlType.MAINMALL);
+	
+		// 자기 상품
+		List<Product> subProducts = productRepository.findByStoreAndExpiredAtIsNull(store);
+		
+		List<String> mainProductCodes = mainProducts.stream().map(m -> m.getCode()).collect(Collectors.toList());
+		List<String> subProductCodes = subProducts.stream().map(s -> s.getCode()).collect(Collectors.toList());
+		
+		// 임시 카테고리; 임시 카테고리를 강제 생성해서 넣어준다
+		MainCategory mainCategory = MainCategory.builder()
+				.name("임시")
+				.store(store)
+				.build();
+		mainCategoryRepository.save(mainCategory);
+		
+		SubCategory subCategory = SubCategory.builder()
+				.name("임시")
+				.build();
+		SubCategory newSub = subCategoryRepository.save(subCategory);
+		
+		// 1. 메인몰 상품 중 없는 것은 save
+		List<Product> newProducts = mainProducts.stream().filter(m -> !subProductCodes.contains(m.getCode())).collect(Collectors.toList());
+		
+		newProducts.stream().map(p -> {
+			p.setStore(store);
+			p.changeSubCategory(newSub);
+			return p;
+		}).collect(Collectors.toList());
+		
+		productRepository.saveAll(newProducts);
+		
+		// TODO: 하위에 있는 옵션도 모두 가져오기
+		
+		
+		// 2. 메인몰 상품 중 있는 것은 update
+		List<Product> updateProducts = subProducts.stream().filter(s -> mainProductCodes.contains(s.getCode())).collect(Collectors.toList());
+		Map<String, Product> mainProductsMap = mainProducts.stream().collect(Collectors.toMap(Product::getCode, Function.identity()));
+		
+		updateProducts.forEach(p -> {
+			Product product = mainProductsMap.get(p.getCode());
+			p.updateToMain(product);
+		});
+		
+		// TODO: 하위에 있는 옵션도 모두 가져오기
 	}
 
 }

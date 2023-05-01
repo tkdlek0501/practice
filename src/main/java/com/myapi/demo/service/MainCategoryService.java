@@ -4,7 +4,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.myapi.demo.domain.MainCategory;
+import com.myapi.demo.domain.Store;
+import com.myapi.demo.domain.User;
+import com.myapi.demo.exception.NotFoundStoreException;
 import com.myapi.demo.repository.MainCategoryRepository;
+import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.request.MainCategoryRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -18,10 +22,14 @@ public class MainCategoryService {
 	
 	private final MainCategoryRepository mainCategoryRepository;
 	
+	private final StoreRepository storeRepository;
+	
 	@Transactional
-	public void create(MainCategoryRequest request) {
+	public void create(MainCategoryRequest request, User user) {
 		
-		MainCategory mainCategory = request.toEntity(request);
+		Store store = storeRepository.findByUser(user).orElseThrow(() -> new NotFoundStoreException(null));
+		
+		MainCategory mainCategory = request.toEntity(request, store);
 		mainCategoryRepository.save(mainCategory);
 		
 	}

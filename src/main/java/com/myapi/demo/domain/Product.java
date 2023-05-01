@@ -79,7 +79,6 @@ public class Product extends AuditEntity{
 		orderDetail.setProduct(this);
 	}
 	
-	
 	public void update(Product product) {
 		this.name = product.getName();
 		this.price = product.getPrice();
@@ -87,4 +86,8 @@ public class Product extends AuditEntity{
 		this.priceControlType = product.getPriceControlType();
 	}
 	
+	public void updateToMain(Product product) {
+		this.name = product.getName();
+		this.price = product.getPrice();
+	}
 }
