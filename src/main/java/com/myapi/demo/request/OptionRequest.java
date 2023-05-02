@@ -4,6 +4,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.myapi.demo.domain.Option;
+import com.myapi.demo.domain.OptionGroup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,8 +28,9 @@ public class OptionRequest {
 	@NotNull(message = "옵션 품절 여부를 체크해주세요.")
 	private Boolean isSoldOut;
 	
-	public static Option toEntity(OptionRequest optionRequest) {
+	public static Option toEntity(OptionRequest optionRequest, OptionGroup optionGroup) {
 		return Option.builder()
+		.optionGroup(optionGroup)
 		.name(optionRequest.getName())
 		.quantity(optionRequest.getQuantity())
 		.isSoldOut(optionRequest.getIsSoldOut())

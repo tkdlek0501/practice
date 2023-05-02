@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import com.myapi.demo.domain.OptionGroup;
+import com.myapi.demo.domain.Product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,9 +31,10 @@ public class OptionGroupRequest {
 	@Builder.Default
 	private List<OptionRequest> optionRequests = new ArrayList<>();
 	
-	public static OptionGroup toEntity(OptionGroupRequest optionGroupRequest) {
+	public static OptionGroup toEntity(OptionGroupRequest optionGroupRequest, Product product) {
 		
 		return OptionGroup.builder()
+		.product(product)
 		.name(optionGroupRequest.getName())
 		.isRequired(optionGroupRequest.getIsRequired())
 		.options(new ArrayList<>())

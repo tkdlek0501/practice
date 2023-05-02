@@ -1,5 +1,6 @@
 package com.myapi.demo.service;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,8 @@ import com.myapi.demo.exception.NotSatisfiedCreateOptionConditionException;
 import com.myapi.demo.exception.NotSatisfiedCreateOptionGroupConditionException;
 import com.myapi.demo.exception.NotSatisfiedUserTypeException;
 import com.myapi.demo.repository.MainCategoryRepository;
+import com.myapi.demo.repository.OptionGroupRepository;
+import com.myapi.demo.repository.OptionRepository;
 import com.myapi.demo.repository.ProductRepository;
 import com.myapi.demo.repository.StoreRepository;
 import com.myapi.demo.repository.SubCategoryRepository;
@@ -59,6 +62,10 @@ public class ProductService {
 	
 	private final MainCategoryRepository mainCategoryRepository;
 	
+	private final OptionGroupRepository optionGroupRepository;
+	
+	private final OptionRepository optionRepository;
+	
 	@Transactional
 	public void create(ProductCreateRequest request) {
 		
@@ -86,22 +93,40 @@ public class ProductService {
 			owner = "S";
 		}
 		
+		// 상품 저장
 		Product product = request.getProductRequest().toEntity(request.getProductRequest(), owner);
 		
 		product.changeStore(store);
 		product.changeSubCategory(subCategory);
 		
+		Product newProduct = productRepository.save(product);
+		
+		// 옵션 그룹 저장
 		List<OptionGroup> optionGroups = request.getProductRequest().getOptionGroupRequests().stream()
-				.map(ogr -> {
-					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
-					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
-					options.forEach(opt -> optionGroup.addOption(opt));
-					return optionGroup;
-				}).collect(Collectors.toList());
+				.map(ogr -> OptionGroupRequest.toEntity(ogr, newProduct))
+				.collect(Collectors.toList());
+		List<OptionGroup> newOptionGroups = optionGroupRepository.saveAll(optionGroups);
 		
-		optionGroups.forEach(og -> product.addOptionGroup(og));
+		// 옵션 저장
+		List<Option> options = new ArrayList<>();
+		request.getProductRequest().getOptionGroupRequests().forEach(ogr -> {
+			for(int i = 0; i < ogr.getOptionRequests().size(); i++) {
+				options.add(OptionRequest.toEntity(ogr.getOptionRequests().get(i), newOptionGroups.get(i)));
+			}
+		});
+		optionRepository.saveAll(options);
+			
+// cascade 했을 때 로직
+//		List<OptionGroup> optionGroups = request.getProductRequest().getOptionGroupRequests().stream()
+//				.map(ogr -> {
+//					OptionGroup optionGroup = OptionGroupRequest.toEntity(ogr);
+//					List<Option> options = ogr.getOptionRequests().stream().map(OptionRequest::toEntity).collect(Collectors.toList());
+//					options.forEach(opt -> optionGroup.addOption(opt));
+//					return optionGroup;
+//				}).collect(Collectors.toList());
+//		optionGroups.forEach(og -> product.addOptionGroup(og));
 		
-		productRepository.save(product);
+		
 	}
 	
 	
@@ -182,9 +207,37 @@ public class ProductService {
 			return p;
 		}).collect(Collectors.toList());
 		
-		productRepository.saveAll(newProducts);
+		List<Product> createdProducts = productRepository.saveAll(newProducts);
 		
-		// TODO: 하위에 있는 옵션도 모두 가져오기
+		// TODO: 하위에 있는 옵션그룹, 옵션도 모두 가져오기
+		// 자기 상품, 자기 옵션 그룹으로 매핑 해줘야 한다
+		
+//		List<OptionGroup> newOptionGroups = new ArrayList<>();
+//		newProducts.forEach(p -> {
+//			for(int i = 0; i < p.getOptionGroups().size(); i++) {
+//				OptionGroup optionGroup = p.getOptionGroups().get(i);
+//				newOptionGroups.add(OptionGroup.builder()
+//				 .name(optionGroup.getName())
+//				 .isRequired(optionGroup.isRequired())
+//				 .product(createdProducts.get(i))
+//				 .build());
+//			}
+//		});
+//		List<OptionGroup> createdOptionGroups = optionGroupRepository.saveAll(newOptionGroups);
+//		
+//		List<Option> newOptions = new ArrayList<>();
+//		newProducts.forEach(p -> {
+//			p.getOptionGroups().forEach(og -> {
+//				for(int i = 0; i < og.getOptions().size(); i++) {
+//					Option option = og.getOptions().get(i);
+//					newOptions.add(Option.builder()
+//						.name(option.getName())
+//						.optionGroup(createdOptionGroups.get(i))
+//						.build());
+//				}
+//			});
+//		});
+//		optionRepository.saveAll(newOptions);
 		
 		
 		// 2. 메인몰 상품 중 있는 것은 update

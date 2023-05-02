@@ -74,4 +74,26 @@ public class ProductController {
 	
 	// TODO: 메인몰 상품 정보 일괄적으로 가져오기, 이미 있는 상품(상품 코드 일치 상품)은 update 가 되도록
 	// TODO: 해당 서브몰에서 각 상품의 판매 가능 여부, 품절 여부 등은 관리할 수 있어야 함
+	@PutMapping("/main-mall")
+	public ResponseEntity<Void> updateToMainMallProduct(@AuthenticationPrincipal User user){
+		
+		productService.updateToMainMallProduct(user);
+		return ResponseEntity.ok(null);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
